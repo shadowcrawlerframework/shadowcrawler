@@ -29,6 +29,10 @@ It was built with care, curiosity, and intention.
 
 ---
 
+<p align="center">
+  <img src="assets/logo-shadowcrawler.svg" alt="ShadowCrawler Logo" width="160"/>
+</p>
+
 ## 🚀 Installation
 
 ```bash
@@ -127,10 +131,6 @@ shadowcrawler spiders create
 shadowcrawler inspect
 shadowcrawler stats
 shadowcrawler version
-
-<p align="center">
-  <img src="assets/logo-shadowcrawler.svg" alt="ShadowCrawler Logo" width="160"/>
-</p>
 
 📁 Project Structure
 Code
