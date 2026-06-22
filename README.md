@@ -1,8 +1,4 @@
 <p align="center">
-  <img src="assets/logo-shadowcrawler.svg" alt="ShadowCrawler Logo" width="160"/>
-</p>
-
-<p align="center">
   <img src="assets/banner-shadowcrawler.png" alt="ShadowCrawler Banner" width="100%"/>
 </p>
 
@@ -131,6 +127,10 @@ shadowcrawler spiders create
 shadowcrawler inspect
 shadowcrawler stats
 shadowcrawler version
+
+<p align="center">
+  <img src="assets/logo-shadowcrawler.svg" alt="ShadowCrawler Logo" width="160"/>
+</p>
 
 📁 Project Structure
 Code
