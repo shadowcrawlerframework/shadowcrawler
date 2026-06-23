@@ -1,17 +1,50 @@
 # Changelog
-All notable changes to this project will be documented in this file.
 
-The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+All notable changes to **ShadowCrawler** will be documented in this file.
 
-## [Unreleased]
+This project follows semantic versioning for public releases.  
+Internal development builds prior to **4.1.0** are not listed here.
 
-## [1.0.0] - 2026-06-22
+---
+
+## [4.1.0] — Initial Public Release
+
 ### Added
-- Initial public release of ShadowCrawler.
-- Core crawling engine (HTTP + Browser modes).
-- Domain autodetection system.
-- Authentication pipeline with session persistence.
-- Media extraction pipeline.
-- CLI tools: run, resume, download, inspect, spiders list/create, stats, version.
-- Example spiders: QuotesSpider, WikiSpider, HTTPNewsSpider, GallerySpider, AuthBrowserDemoSpider.
-- Documentation: README, CONTRIBUTING, LICENSE.
+- Full modular crawling engine with domain‑aware spider selection.
+- Hybrid fetcher (HTTP + Playwright) with automatic mode switching.
+- Persistent authentication system with session storage.
+- Media extraction pipeline (images, videos, GIFs, files).
+- Checkpointing system for safe crawl resuming.
+- CLI toolkit:
+  - `run`
+  - `resume`
+  - `download`
+  - `spiders list`
+  - `spiders create`
+  - `inspect`
+  - `stats`
+  - `version`
+- Example spiders:
+  - QuotesSpider  
+  - WikiSpider  
+  - HTTPNewsSpider  
+  - GallerySpider  
+  - AuthBrowserDemoSpider
+- Logging improvements and structured output.
+- Initial documentation and project assets.
+
+### Notes
+This is the first **public** release of ShadowCrawler.  
+The internal engine has undergone many iterations and refinements prior to this version.
+
+---
+
+## Future Versions
+Future releases will include:
+
+- Plugin system  
+- Distributed crawling  
+- Dashboard / Web UI  
+- Cloud runner  
+- Spider templates  
+- Auto‑throttling  
