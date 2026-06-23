@@ -25,6 +25,8 @@ We are committed to creating a safe, respectful, and welcoming environment for a
 ## Our Responsibilities
 Project maintainers are responsible for clarifying standards of acceptable behavior and are expected to take appropriate and fair corrective action in response to any behavior they deem inappropriate.
 
+They have the right and responsibility to remove, edit, or reject comments, commits, code, issues, or other contributions that are not aligned with this Code of Conduct.
+
 ## Enforcement
 Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by opening an issue or contacting the maintainers privately. All complaints will be reviewed and investigated promptly and fairly.
 
