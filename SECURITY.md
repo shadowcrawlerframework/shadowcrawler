@@ -10,8 +10,7 @@ If you discover a security vulnerability, please report it responsibly.
 
 Instead, contact the maintainers privately at:
 
-**security@shadowcrawler.dev**  
-*(placeholder — replace with your real email)*
+**shadowcrawler.framework@gmail.com**  
 
 Please include:
 - A clear description of the vulnerability.
