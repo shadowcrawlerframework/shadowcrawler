@@ -37,27 +37,31 @@ It was built with care, curiosity, and intention.
 
 ```bash
 pip install shadowcrawler
+```
 
-⚡ Quickstart
+## ⚡ Quickstart
 
 Run with automatic spider detection:
-bash
 
+```bash
 shadowcrawler run --url https://quotes.toscrape.com
+```
 
 Run with browser mode:
-bash
 
+```bash
 shadowcrawler run --url https://demoqa.com/login --browser
+```
 
 List spiders:
-bash
 
+```bash
 shadowcrawler spiders list
+```
 
-🕷 Creating a Spider
-python
+## 🕷 Creating a Spider
 
+```python
 from shadowcrawler.core.spider_base import SpiderBase
 
 class QuotesSpider(SpiderBase):
@@ -69,60 +73,56 @@ class QuotesSpider(SpiderBase):
                 "text": quote.css(".text::text").get(),
                 "author": quote.css(".author::text").get(),
             }
+```
 
-🔍 Domain Autodetection
+## 🔍 Domain Autodetection
 
 ShadowCrawler automatically selects the correct spider based on the URL:
-bash
 
+```bash
 shadowcrawler run --url https://example.com/page
+```
 
 If your spider declares:
-python
 
+```python
 domain = "example.com"
+```
 
 …it will be used automatically.
-🌐 Fetch Modes
-HTTP Mode (default)
 
+## 🌐 Fetch Modes
+
+**HTTP Mode (default)**  
 Fast, lightweight, ideal for most sites.
-Browser Mode
 
-Powered by Playwright.
+**Browser Mode**  
+Powered by Playwright.  
 Used automatically when:
 
-    login is required
+- login is required  
+- the site is dynamic  
+- the spider requests browser mode  
 
-    the site is dynamic
+## 🔐 Persistent Authentication
 
-    the spider requests browser mode
+- Login once  
+- Session saved to JSON  
+- BrowserManager loads it automatically  
+- AuthHandler detects login state  
 
-🔐 Persistent Authentication
-
-    Login once
-
-    Session saved to JSON
-
-    BrowserManager loads it automatically
-
-    AuthHandler detects login state
-
-🖼 Media Pipeline
+## 🖼 Media Pipeline
 
 Automatically extracts:
 
-    images
+- images  
+- videos  
+- GIFs  
+- downloadable files  
 
-    videos
+## 🧰 CLI Commands
 
-    GIFs
-
-    downloadable files
-
-🧰 CLI Commands
-Code
-
+```bash
 shadowcrawler run
 shadowcrawler resume
 shadowcrawler download
@@ -131,10 +131,11 @@ shadowcrawler spiders create
 shadowcrawler inspect
 shadowcrawler stats
 shadowcrawler version
+```
 
-📁 Project Structure
-Code
+## 📁 Project Structure
 
+```bash
 shadowcrawler/
   core/
   spiders/
@@ -144,62 +145,62 @@ shadowcrawler/
   models/
   parsing/
   tools/
+```
 
-🕸 Included Example Spiders
+## 🕸 Included Example Spiders
 
-    QuotesSpider
+- QuotesSpider  
+- WikiSpider  
+- HTTPNewsSpider  
+- GallerySpider  
+- AuthBrowserDemoSpider  
 
-    WikiSpider
+---
 
-    HTTPNewsSpider
+## 🗺 Roadmap
 
-    GallerySpider
+- [ ] PyPI release  
+- [ ] Plugin system  
+- [ ] Distributed crawling  
+- [ ] Dashboard / Web UI  
+- [ ] Cloud runner  
+- [ ] Spider templates  
+- [ ] Auto‑throttling  
 
-    AuthBrowserDemoSpider
+---
 
-🗺 Roadmap
-
-    [ ] PyPI release
-
-    [ ] Plugin system
-
-    [ ] Distributed crawling
-
-    [ ] Dashboard / Web UI
-
-    [ ] Cloud runner
-
-    [ ] Spider templates
-
-    [ ] Auto‑throttling
-
-📦 ShadowCrawler on itch.io
+## 📦 ShadowCrawler on itch.io
 
 ShadowCrawler is distributed through itch.io, where you can get:
 
-    The latest stable release
-
-    Optional Pro features
-
-    Example spiders
-
-    Early access builds
-
-    Support the project directly
+- The latest stable release  
+- Optional Pro features  
+- Example spiders  
+- Early access builds  
+- Support the project directly  
 
 👉 Download or support the project on itch.io:  
 https://shadowcrawlerframework.itch.io/shadowcrawler
-☕ Support the Project
+
+---
+
+## ☕ Support the Project
 
 If ShadowCrawler has helped you or you want to support future development, you can leave a tip on Ko‑fi.
 
 Every contribution helps keep the project alive and evolving.
 
-👉 Support on Ko‑fi:  
-https://ko-fi.com/shadowcrawler
-📜 License
+<p align="left">
+  <a href="https://ko-fi.com/shadowcrawlerframework" target="_blank">
+    <img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="Support on Ko-fi" />
+  </a>
+</p>
 
-ShadowCrawler is licensed under the Business Source License 1.1 (BUSL‑1.1).
+---
+
+## 📜 License
+
+ShadowCrawler is licensed under the Business Source License 1.1 (BUSL‑1.1).  
 It will convert to Apache 2.0 on:
 
-November 16, 2030 — Allan’s 50th birthday.
+**November 16, 2030 — Allan’s 50th birthday.**
