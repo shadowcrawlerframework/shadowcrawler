@@ -3,6 +3,8 @@
 ## Supported Versions
 Security updates will be provided for the latest major release of ShadowCrawler.
 
+---
+
 ## Reporting a Vulnerability
 If you discover a security vulnerability, please report it responsibly.
 
@@ -10,7 +12,7 @@ If you discover a security vulnerability, please report it responsibly.
 
 Instead, contact the maintainers privately at:
 
-**shadowcrawler.framework@gmail.com**  
+**shadowcrawler.framework@gmail.com**
 
 Please include:
 - A clear description of the vulnerability.
@@ -24,17 +26,54 @@ We will:
 - Provide a timeline for the fix when possible.
 - Credit you in the release notes unless you prefer to remain anonymous.
 
+---
+
+## Session Files and Authentication Data
+
+ShadowCrawler supports **persistent authentication**, which stores session data (cookies, tokens, or login state) locally on the user's machine.
+
+To ensure security:
+
+- Session files are **never uploaded**, **never transmitted**, and **never shared** by ShadowCrawler.  
+- These files remain entirely under the user’s control and are stored in the local filesystem.  
+- Users are responsible for protecting their own environment, including:
+  - File permissions  
+  - Operating system security  
+  - Disk encryption  
+  - Avoiding sharing session files with others  
+
+ShadowCrawler **cannot** prevent misuse of session files if a user’s machine is compromised or if the files are shared intentionally or accidentally.
+
+**The security of local session data is the responsibility of the user.**
+
+---
+
 ## Responsible Use
 ShadowCrawler must not be used for:
-- Illegal activities.
-- Unauthorized access to systems.
-- Harassment, abuse, or targeted harm.
-- Violations of terms of service of any website.
 
-Users are responsible for ensuring their use complies with local laws and ethical standards.
+- Illegal activities  
+- Unauthorized access to systems  
+- Harassment, abuse, or targeted harm  
+- Violations of terms of service of any website  
+
+Users are responsible for ensuring their use complies with local laws, ethical standards, and platform policies.
+
+---
 
 ## Disclosure Policy
 We follow a responsible disclosure model:
-- Vulnerabilities are fixed privately.
-- A patch is released.
-- A public advisory is published afterward.
+
+- Vulnerabilities are fixed privately  
+- A patch is released  
+- A public advisory is published afterward  
+
+---
+
+## Disclaimer
+ShadowCrawler provides tools for automation and crawling, but **cannot control how users store, secure, or manage their own authentication data**.
+
+By using this software, users agree that:
+
+- They are responsible for securing their environment  
+- They understand the risks of storing session data locally  
+- They will not hold the maintainers liable for misuse, leaks, or compromise of data stored on their own systems  
