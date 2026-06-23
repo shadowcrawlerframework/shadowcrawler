@@ -152,6 +152,79 @@ Or use custom logic depending on the site.
 
 ---
 
+## 🛠 Spider Scaffolding (CLI)
+
+ShadowCrawler includes a scaffolding tool that generates all required components for a new spider.
+
+### Basic spider creation
+
+```bash
+shadowcrawler spiders create myspider
+```
+
+This generates:
+
+```
+shadowcrawler/
+  spiders/
+    myspider/
+      MyspiderSpider.py
+  site_extractors/
+    myspider/
+      MyspiderExtractor.py
+```
+
+You get:
+
+- A **Spider** class  
+- A **SiteExtractor** class  
+- A clean folder structure  
+
+### Creating a spider with authentication support
+
+```bash
+shadowcrawler spiders create myspider --with-auth
+```
+
+This generates:
+
+```
+auth/
+  myspider/
+    MyspiderAuth.py
+```
+
+### Creating a spider with extractor + auth (full template)
+
+```bash
+shadowcrawler spiders create myspider --with-extractor --with-auth
+```
+
+This is recommended for complex sites.
+
+---
+
+## 📁 Generated File Responsibilities
+
+### **Spider (`MyspiderSpider.py`)**
+- Declares the domain  
+- Defines parsing logic  
+- Controls fetch mode  
+- Coordinates with extractor and auth  
+
+### **SiteExtractor (`MyspiderExtractor.py`)**
+- Handles CSS/XPath extraction  
+- Normalizes data  
+- Provides helper methods for parsing  
+
+### **AuthHandler (`MyspiderAuth.py`)**
+- Manages login flows  
+- Saves and loads session data  
+- Detects login state  
+- Can request browser mode when needed  
+
+---
+
 ## 🧪 Example Spiders Included
 
 ShadowCrawler ships with several example spiders:
@@ -160,38 +233,22 @@ ShadowCrawler ships with several example spiders:
 Simple HTML extraction.
 
 ### **WikiSpider**
-Demonstrates structured content parsing.
+Structured content parsing.
 
 ### **HTTPNewsSpider**
-Shows HTTP‑only crawling with article extraction.
+HTTP‑only crawling with article extraction.
 
 ### **GallerySpider**
-Demonstrates media extraction (images, galleries).
+Media extraction (images, galleries).
 
 ### **AuthBrowserDemoSpider**
-Shows login + browser mode + session persistence.
+Login + browser mode + session persistence.
 
 These examples live in:
 
 ```
 shadowcrawler/spiders/
 ```
-
----
-
-## 🧩 Creating a New Spider (CLI)
-
-You can scaffold a new spider using:
-
-```bash
-shadowcrawler spiders create myspider
-```
-
-This generates:
-
-- Spider class  
-- Extractor stub  
-- Directory structure  
 
 ---
 
