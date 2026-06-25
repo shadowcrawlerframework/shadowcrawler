@@ -87,3 +87,5 @@ By using this software, users agree that:
 - They are responsible for securing their environment  
 - They understand the risks of storing session data locally  
 - They will not hold the maintainers liable for misuse, leaks, or compromise of data stored on their own systems
+
+---
