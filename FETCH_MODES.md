@@ -1,3 +1,5 @@
+---
+
 # Fetch Modes in ShadowCrawler
 
 ShadowCrawler uses a **hybrid fetching system** that automatically chooses between fast HTTP requests and full browser automation via Playwright.
@@ -32,21 +34,20 @@ ShadowCrawler automatically selects the correct mode unless overridden.
 
 The engine determines the fetch mode using:
 
-1. **Spider’s declared `fetch_mode`**
-2. **Spider’s `use_browser()` method**
-3. **CLI flags (`--browser` / `--no-browser`)**
-4. **Auth requirements**
-5. **Site behavior (dynamic content, JS rendering)**
+1. **CLI flags (`--force-browser`, `--force-http`)**
+2. **Auth requirements (`use_browser_for_auth`)**
+3. **Spider’s declared `fetch_mode`**
+4. **Spider’s `use_browser()` method**
+5. **Engine heuristics (dynamic content detection)**
 
-### Priority Order
+### Priority Order (highest → lowest)
 
-From highest to lowest:
-
-1. **CLI override**  
-2. **Spider’s explicit `fetch_mode`**  
-3. **Spider’s `use_browser(url, type_)`**  
-4. **Engine heuristics**  
-5. **Default: HTTP**
+1. **CLI override (`--force-browser` / `--force-http`)**  
+2. **AuthHandler requesting browser mode**  
+3. **Spider’s explicit `fetch_mode`**  
+4. **Spider’s `use_browser(url, type_)`**  
+5. **Engine heuristics**  
+6. **Default: HTTP**
 
 ---
 
@@ -100,21 +101,35 @@ def use_browser(self, url, type_):
 
 ## 🛠 CLI Overrides
 
-Users can force a mode:
+Users can override fetch mode behavior:
 
-### Force browser mode
-
-```bash
-shadowcrawler run --url https://example.com --browser
-```
-
-### Force HTTP mode
+### Force browser mode (Playwright for all requests)
 
 ```bash
-shadowcrawler run --url https://example.com --no-browser
+shadowcrawler run --url https://example.com --force-browser
 ```
 
-CLI overrides always take priority.
+### Force HTTP mode (disable browser entirely)
+
+```bash
+shadowcrawler run --url https://example.com --force-http
+```
+
+### Show the browser window (disable headless mode)
+
+```bash
+shadowcrawler run --url https://example.com --show-browser
+```
+
+### Debug fetch mode decisions
+
+```bash
+shadowcrawler run --url https://example.com --debug
+```
+
+> **Note:**  
+> The old flags `--browser` and `--no-browser` have been replaced by  
+> **`--force-browser`** and **`--force-http`** for clarity and consistency.
 
 ---
 
@@ -125,9 +140,40 @@ If a spider uses an `AuthHandler`, ShadowCrawler may automatically switch to bro
 - Login is required  
 - Cookies must be refreshed  
 - The site uses dynamic login flows  
-- The spider explicitly requests browser mode  
+- The AuthHandler sets `use_browser_for_auth = True`  
+
+Authentication always runs **before** the crawl begins, ensuring:
+
+- Workers share the same authenticated session  
+- Browser mode is activated if required  
+- Session state is saved once and reused  
 
 Session data is stored locally and never transmitted.
+
+---
+
+## ⚙ Worker Interaction (`--workers N`)
+
+Multi‑worker crawling does **not** change fetch mode selection.
+
+Workers:
+
+- Use the fetch mode already chosen by the engine  
+- Never run authentication  
+- Never override fetch mode  
+- Share the same session and cookies  
+
+Example:
+
+```bash
+shadowcrawler run --url https://example.com --workers 4
+```
+
+If browser mode is active (via spider, auth, or `--force-browser`),  
+**all workers use browser mode**.
+
+If HTTP mode is active,  
+**all workers use HTTP mode**.
 
 ---
 
@@ -135,10 +181,11 @@ Session data is stored locally and never transmitted.
 
 | Scenario | Mode Used |
 |---------|-----------|
+| CLI `--force-browser` | Browser |
+| CLI `--force-http` | HTTP |
+| AuthHandler requests browser | Browser |
 | Spider declares `fetch_mode = "browser"` | Browser |
 | Spider declares `fetch_mode = "http"` | HTTP |
-| CLI `--browser` | Browser |
-| CLI `--no-browser` | HTTP |
 | Spider’s `use_browser()` returns True | Browser |
 | Dynamic site detected | Browser |
 | Everything else | HTTP |
@@ -158,6 +205,7 @@ The engine will print:
 - Selected mode  
 - Reason for selection  
 - Overrides applied  
+- Whether browser mode was forced by auth or CLI  
 
 ---
 
@@ -166,7 +214,10 @@ The engine will print:
 - Browser mode is slower but more powerful.  
 - HTTP mode is faster but limited.  
 - Spiders should declare their needs clearly.  
-- Users can override behavior at any time.  
+- AuthHandlers may force browser mode.  
+- Users can override behavior at any time with `--force-browser` or `--force-http`.  
+- Workers inherit the selected fetch mode.  
+- `--show-browser` is useful for debugging login flows.  
 
 ---
 
@@ -174,3 +225,5 @@ The engine will print:
 
 ShadowCrawler’s hybrid fetcher is designed to be flexible, predictable, and developer‑friendly.  
 Whether you’re crawling static sites or complex dynamic platforms, the engine adapts to your needs with minimal configuration.
+
+---
