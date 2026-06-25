@@ -1,5 +1,5 @@
 # shadowcrawler/cli/commands/auth.py
-# ShadowCrawler v4.1.0 — Auth Management Commands
+# ShadowCrawler v4.1.1 — Auth Management Commands
 #
 # ShadowCrawler — Copyright © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).

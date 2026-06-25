@@ -1,5 +1,5 @@
 # shadowcrawler/core/frontier.py
-# ShadowCrawler v4.1.0 — Frontier (Priority Queue + Dedupe)
+# ShadowCrawler v4.1.1 — Frontier (Priority Queue + Dedupe)
 #
 # ShadowCrawler © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).
@@ -14,7 +14,7 @@ from shadowcrawler.logging import get_logger
 
 
 class Frontier:
-    """Priority-based request frontier with dedupe for ShadowCrawler v4.1.0.
+    """Priority-based request frontier with dedupe for ShadowCrawler v4.1.1.
 
     Responsibilities:
         - Deduplicate requests using fingerprint or URL.

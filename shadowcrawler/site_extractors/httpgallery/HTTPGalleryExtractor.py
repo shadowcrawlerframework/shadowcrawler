@@ -1,5 +1,5 @@
 # shadowcrawler/site_extractors/httpgallery/HTTPGalleryExtractor.py
-# ShadowCrawler v4.1.0 — HTTP Gallery Extractor (PlaceKitten Demo)
+# ShadowCrawler v4.1.1 — HTTP Gallery Extractor (PlaceKitten Demo)
 #
 # ShadowCrawler © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).

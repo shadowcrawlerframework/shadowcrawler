@@ -1,5 +1,5 @@
 # shadowcrawler/auth/base.py
-# ShadowCrawler v4.1.0 — Base Auth Handler for HTTP (RequestsFetcher)
+# ShadowCrawler v4.1.1 — Base Auth Handler for HTTP (RequestsFetcher)
 #
 # ShadowCrawler — Copyright © 2024–2030 Allan Mancera
 # This software is licensed under the Business Source License 1.1 (BUSL‑1.1).

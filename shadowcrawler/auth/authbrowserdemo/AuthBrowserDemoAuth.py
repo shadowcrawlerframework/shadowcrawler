@@ -1,5 +1,5 @@
 # shadowcrawler/auth/authbrowserdemo/AuthBrowserDemoAuth.py
-# ShadowCrawler v4.1.0 — Example Browser Auth Handler (Playwright)
+# ShadowCrawler v4.1.1 — Example Browser Auth Handler (Playwright)
 #
 # This file is provided **as an example only**.
 # It demonstrates how to implement a manual login flow using Playwright.

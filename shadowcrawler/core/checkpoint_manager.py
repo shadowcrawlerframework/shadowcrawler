@@ -1,5 +1,5 @@
 # shadowcrawler/core/checkpoint_manager.py
-# ShadowCrawler v4.1.0 — Unified Checkpoint Manager
+# ShadowCrawler v4.1.1 — Unified Checkpoint Manager
 #
 # ShadowCrawler © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).
@@ -35,7 +35,7 @@ from shadowcrawler.logging import get_logger
 
 
 class CheckpointManager:
-    """Unified checkpoint manager for ShadowCrawler v4.1.0.
+    """Unified checkpoint manager for ShadowCrawler v4.1.1.
 
     Responsible for:
         - Serializing the full Engine state into a JSON checkpoint.

@@ -1,5 +1,5 @@
 # shadowcrawler/models/result.py
-# ShadowCrawler v4.1.0 — Structured Extraction Result
+# ShadowCrawler v4.1.1 — Structured Extraction Result
 #
 # ShadowCrawler © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).
@@ -12,7 +12,7 @@ from typing import Dict, Any
 
 @dataclass
 class Result:
-    """Structured extraction result for ShadowCrawler v4.1.0.
+    """Structured extraction result for ShadowCrawler v4.1.1.
 
     Represents a normalized data payload produced by a SiteExtractor.
     Consumed by:

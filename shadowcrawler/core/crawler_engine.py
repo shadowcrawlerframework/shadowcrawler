@@ -1,5 +1,5 @@
 # shadowcrawler/core/crawler_engine.py
-# ShadowCrawler v4.1.0 — Asynchronous Crawling Engine
+# ShadowCrawler v4.1.1 — Asynchronous Crawling Engine
 #
 # ShadowCrawler — Copyright © 2024–2030 Allan Mancera
 # This software is licensed under the Business Source License 1.1 (BUSL‑1.1).
@@ -124,7 +124,7 @@ class CrawlerEngine:
         self.verbose: bool = verbose
 
         self.logger = get_logger("engine")
-        self.logger.info("Initializing ShadowCrawler Engine v4.1.0")
+        self.logger.info("Initializing ShadowCrawler Engine v4.1.1")
 
         # Base components
         self.frontier: Frontier = frontier

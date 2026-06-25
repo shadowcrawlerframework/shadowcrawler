@@ -1,5 +1,5 @@
 # shadowcrawler/auth/authdemo/AuthDemoAuth.py
-# ShadowCrawler v4.1.0 — Example HTTP Auth Handler (RequestsFetcher)
+# ShadowCrawler v4.1.1 — Example HTTP Auth Handler (RequestsFetcher)
 #
 # This file is provided **as an example only**.
 # It demonstrates how to implement a simple HTTP-based login flow.

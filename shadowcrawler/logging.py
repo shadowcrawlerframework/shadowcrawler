@@ -1,5 +1,5 @@
 # shadowcrawler/logging.py
-# ShadowCrawler v4.1.0 — Centralized Corporate Logging System
+# ShadowCrawler v4.1.1 — Centralized Corporate Logging System
 #
 # ShadowCrawler — Copyright © 2024–2030 Allan Mancera
 # This software is licensed under the Business Source License 1.1 (BUSL‑1.1).

@@ -1,5 +1,5 @@
 # shadowcrawler/fetcher/base.py
-# ShadowCrawler v4.1.0 — Base Fetcher Interface
+# ShadowCrawler v4.1.1 — Base Fetcher Interface
 #
 # ShadowCrawler © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).

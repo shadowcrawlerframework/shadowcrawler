@@ -1,11 +1,11 @@
 # shadowcrawler/core/browser_manager.py
-# ShadowCrawler v4.1.0 — Browser Manager
+# ShadowCrawler v4.1.1 — Browser Manager
 #
 # ShadowCrawler — Copyright © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).
 
 """
-BrowserManager for ShadowCrawler v4.1.0.
+BrowserManager for ShadowCrawler v4.1.1.
 
 Responsibilities:
     - Provide HTML‑only Playwright contexts for crawling (resource‑blocked).
@@ -64,15 +64,7 @@ Object.defineProperty(navigator, 'platform', { get: () => 'Win32' });
 # BrowserManager
 # ------------------------------------------------------------
 class BrowserManager:
-    """Playwright browser lifecycle and context manager for ShadowCrawler.
-
-    Args:
-        headless: Whether to run Chromium in headless mode.
-        global_headers: Optional global HTTP headers.
-        global_cookies: Optional global cookies.
-        proxy: Optional proxy configuration.
-        show_browser: If True, forces visible browser window.
-    """
+    """Playwright browser lifecycle and context manager for ShadowCrawler."""
 
     def __init__(
         self,
@@ -82,7 +74,6 @@ class BrowserManager:
         proxy: Optional[Dict[str, Any]] = None,
         show_browser: bool = False,
     ) -> None:
-        # show_browser overrides headless
         self.headless = not show_browser
 
         self.global_headers = global_headers or {}
@@ -128,16 +119,7 @@ class BrowserManager:
         domain: Optional[str] = None,
         auth_handler: Optional[Any] = None,
     ) -> Any:
-        """Create a new Playwright context.
-
-        Args:
-            html_only: If True, block images/media/fonts/etc.
-            domain: Domain for cookie scoping.
-            auth_handler: Optional auth handler with load_session(ctx) or storage_path.
-
-        Returns:
-            A Playwright BrowserContext instance.
-        """
+        """Create a new Playwright context."""
         storage_state = None
         if auth_handler and hasattr(auth_handler, "storage_path"):
             if os.path.exists(auth_handler.storage_path):
@@ -195,7 +177,7 @@ class BrowserManager:
         domain = urlparse(url).netloc
         if domain not in self.html_contexts:
             self.html_contexts[domain] = await self._create_context(
-                html_only=(auth_handler is None),  # FULL if auth handler exists
+                html_only=(auth_handler is None),
                 domain=domain,
                 auth_handler=auth_handler,
             )
@@ -207,12 +189,20 @@ class BrowserManager:
         if self.service_context:
             return self.service_context
 
+        # Determine domain for FULL context
         domain = None
+
+        # 1) If auth handler defines a domain, use it
         if auth_handler and hasattr(auth_handler, "domain"):
             domain = auth_handler.domain
 
+        # 2) If HTML contexts exist, use their domain (real spider domain)
+        if not domain and self.html_contexts:
+            domain = next(iter(self.html_contexts.keys()))
+
+        # 3) Fallback to safe placeholder
         if not domain:
-            domain = "poringa.net"
+            domain = "unknown"
 
         self.logger.info(f"Creating FULL service context for domain: {domain}")
 

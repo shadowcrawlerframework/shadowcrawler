@@ -1,5 +1,5 @@
 # shadowcrawler/core/spider_base.py
-# ShadowCrawler v4.1.0 — Base Spider Class
+# ShadowCrawler v4.1.1 — Base Spider Class
 #
 # ShadowCrawler © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).
@@ -51,7 +51,7 @@ class SpiderMeta(type):
 # Spider Base Class
 # ------------------------------------------------------------
 class SpiderBase(metaclass=SpiderMeta):
-    """Universal contract for all spiders in ShadowCrawler v4.1.0.
+    """Universal contract for all spiders in ShadowCrawler v4.1.1.
 
     Spiders define:
         - classify(url): determine page type

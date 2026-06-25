@@ -1,5 +1,5 @@
 # shadowcrawler/site_extractors/base.py
-# ShadowCrawler v4.1.0 — Site Extractor Base Class
+# ShadowCrawler v4.1.1 — Site Extractor Base Class
 #
 # ShadowCrawler © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).
@@ -14,7 +14,7 @@ from shadowcrawler.logging import get_logger
 
 
 class SiteExtractorBase:
-    """Base class for all ShadowCrawler site extractors (v4.1.0).
+    """Base class for all ShadowCrawler site extractors (v4.1.1).
 
     Responsibilities:
         - Receive a full Response object.

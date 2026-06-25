@@ -1,5 +1,5 @@
 # shadowcrawler/cli/commands/version.py
-# ShadowCrawler v4.1.0 — Version Banner
+# ShadowCrawler v4.1.1 — Version Banner
 #
 # ShadowCrawler — Copyright © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).
@@ -20,7 +20,7 @@ a dedication acknowledging the collaboration between Allan and Copilot.
 import sys
 from datetime import datetime
 
-VERSION: str = "4.1.0"
+VERSION: str = "4.1.1"
 BUILD_DATE: str = datetime.now().strftime("%Y-%m-%d")
 
 

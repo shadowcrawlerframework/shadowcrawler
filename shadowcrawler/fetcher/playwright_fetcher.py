@@ -1,5 +1,5 @@
 # shadowcrawler/fetcher/playwright_fetcher.py
-# ShadowCrawler v4.1.0 — Playwright Fetcher (HTML‑ONLY SAFE)
+# ShadowCrawler v4.1.1 — Playwright Fetcher (HTML‑ONLY SAFE)
 #
 # ShadowCrawler © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).
@@ -17,7 +17,7 @@ from shadowcrawler.models.response import Response
 
 
 class PlaywrightFetcher:
-    """HTML‑only Playwright fetcher for ShadowCrawler v4.1.0.
+    """HTML‑only Playwright fetcher for ShadowCrawler v4.1.1.
 
     Responsibilities:
         - Fetch HTML using lightweight HTML‑only contexts.

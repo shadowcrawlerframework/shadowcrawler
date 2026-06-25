@@ -1,5 +1,5 @@
 # shadowcrawler/spiders/authbrowserdemo/AuthBrowserDemoSpider.py
-# ShadowCrawler v4.1.0 — Auth Browser Demo Spider
+# ShadowCrawler v4.1.1 — Auth Browser Demo Spider
 #
 # ShadowCrawler © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).

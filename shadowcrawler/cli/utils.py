@@ -1,5 +1,5 @@
 # shadowcrawler/cli/utils.py
-# ShadowCrawler v4.1.0 — CLI Utilities
+# ShadowCrawler v4.1.1 — CLI Utilities
 #
 # ShadowCrawler — Copyright © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).

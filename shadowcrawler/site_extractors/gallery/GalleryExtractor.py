@@ -1,5 +1,5 @@
 # shadowcrawler/site_extractors/gallery/GalleryExtractor.py
-# ShadowCrawler v4.1.0 — Gallery Extractor (Unsplash Example)
+# ShadowCrawler v4.1.1 — Gallery Extractor (Unsplash Example)
 #
 # ShadowCrawler © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).

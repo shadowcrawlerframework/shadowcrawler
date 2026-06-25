@@ -5,11 +5,11 @@
 All notable changes to **ShadowCrawler** will be documented in this file.
 
 This project follows semantic versioning for public releases.  
-Internal development builds prior to **4.1.0** are not listed here.
+Internal development builds prior to **4.1.1** are not listed here.
 
 ---
 
-## [4.1.0] — Initial Public Release
+## [4.1.1] — Initial Public Release
 
 ### Added
 - Full modular crawling engine with domain‑aware spider selection.  

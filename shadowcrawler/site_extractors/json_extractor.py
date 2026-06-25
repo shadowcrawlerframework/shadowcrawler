@@ -1,5 +1,5 @@
 # shadowcrawler/site_extractors/json_extractor.py
-# ShadowCrawler v4.1.0 — JSON Extractor
+# ShadowCrawler v4.1.1 — JSON Extractor
 #
 # ShadowCrawler © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).
@@ -13,7 +13,7 @@ from shadowcrawler.site_extractors.base import SiteExtractorBase
 
 
 class JSONExtractor(SiteExtractorBase):
-    """Generic JSON extractor for ShadowCrawler v4.1.0.
+    """Generic JSON extractor for ShadowCrawler v4.1.1.
 
     The spider provides a handler with the signature:
 

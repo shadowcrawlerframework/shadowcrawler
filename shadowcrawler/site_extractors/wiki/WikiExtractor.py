@@ -1,5 +1,5 @@
 # shadowcrawler/site_extractors/wiki/WikiExtractor.py
-# ShadowCrawler v4.1.0 — Wikipedia Extractor (Official Example)
+# ShadowCrawler v4.1.1 — Wikipedia Extractor (Official Example)
 #
 # ShadowCrawler © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).

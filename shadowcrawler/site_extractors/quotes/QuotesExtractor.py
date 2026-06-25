@@ -1,5 +1,5 @@
 # shadowcrawler/site_extractors/quotes/QuotesExtractor.py
-# ShadowCrawler v4.1.0 — Quotes to Scrape Extractor
+# ShadowCrawler v4.1.1 — Quotes to Scrape Extractor
 #
 # ShadowCrawler © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).

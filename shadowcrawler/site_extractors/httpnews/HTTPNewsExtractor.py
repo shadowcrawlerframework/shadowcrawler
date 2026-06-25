@@ -1,5 +1,5 @@
 # shadowcrawler/site_extractors/httpnews/HTTPNewsExtractor.py
-# ShadowCrawler v4.1.0 — HTTP News Extractor (Hacker News Example)
+# ShadowCrawler v4.1.1 — HTTP News Extractor (Hacker News Example)
 #
 # ShadowCrawler © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).

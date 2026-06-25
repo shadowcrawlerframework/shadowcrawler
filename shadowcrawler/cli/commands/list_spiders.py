@@ -1,5 +1,5 @@
 # shadowcrawler/cli/commands/list_spiders.py
-# ShadowCrawler v4.1.0 — List Available Spiders
+# ShadowCrawler v4.1.1 — List Available Spiders
 #
 # ShadowCrawler — Copyright © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).

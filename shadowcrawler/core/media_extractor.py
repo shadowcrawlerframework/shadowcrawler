@@ -1,5 +1,5 @@
 # shadowcrawler/core/media_extractor.py
-# ShadowCrawler v4.1.0 — Media Extractor
+# ShadowCrawler v4.1.1 — Media Extractor
 #
 # ShadowCrawler © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).
@@ -14,7 +14,7 @@ from shadowcrawler.logging import get_logger
 
 
 class MediaExtractor:
-    """Normalize media and structured data for ShadowCrawler v4.1.0.
+    """Normalize media and structured data for ShadowCrawler v4.1.1.
 
     Responsibilities:
         - Convert raw media entries into MediaItem objects.
