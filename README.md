@@ -247,6 +247,13 @@ Every contribution helps keep the project alive and evolving.
 
 ---
 
+🤝 Custom Spiders
+
+If your project requires a tailored spider for a specific website or workflow, I occasionally take commissions for exclusive, project‑specific spiders built on top of ShadowCrawler.
+Feel free to reach out if you need a custom solution.
+
+---
+
 ## 📜 License
 
 ShadowCrawler is licensed under the Business Source License 1.1 (BUSL‑1.1).  
