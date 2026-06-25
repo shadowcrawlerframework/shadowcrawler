@@ -6,18 +6,21 @@
 </p>
 
 <p align="center">
-  <a href="https://shadowcrawlerframework.itch.io/shadowcrawler" target="_blank">
-    <img src="https://static.itch.io/images/badge-color.svg" width="170"/>
-  </a>
-  <a href="https://ko-fi.com/shadowcrawlerframework" target="_blank">
-    <img src="https://ko-fi.com/img/githubbutton_sm.svg" width="170"/>
-  </a>
+<a href="https://shadowcrawlerframework.itch.io/shadowcrawler" target="_blank">
+<img src="https://static.itch.io/images/badge-color.svg" width="170"/>
+</a>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/License-BUSL--1.1-blue" />
-  <img src="https://img.shields.io/badge/Python-3.10%2B-blue" />
-  <img src="https://img.shields.io/badge/Status-Active-brightgreen" />
+<a href="https://ko-fi.com/shadowcrawlerframework" target="_blank">
+<img src="https://ko-fi.com/img/githubbutton_sm.svg" width="170"/>
+</a>
+</p>
+
+<p align="center">
+<img src="https://img.shields.io/badge/License-BUSL--1.1-blue" />
+<img src="https://img.shields.io/badge/Python-3.10%2B-blue" />
+<img src="https://img.shields.io/badge/Status-Active-brightgreen" />
 </p>
 
 **A modern, domain‑aware, hybrid web crawling framework for Python.**
