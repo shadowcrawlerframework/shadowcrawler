@@ -1,3 +1,5 @@
+---
+
 # Media Pipeline in ShadowCrawler
 
 ShadowCrawler includes a built‑in media pipeline designed to detect, normalize, and download media files (images, videos, GIFs, and other assets) discovered during a crawl.
@@ -15,6 +17,8 @@ The media pipeline is responsible for:
 - Organizing downloaded files into structured directories  
 - Handling retries and failures  
 - Respecting checkpoints to avoid duplicate downloads  
+- Supporting multi‑worker crawling (`--workers N`)  
+- Allowing users to disable or defer media downloads (`--no-media`, `--download`)  
 
 The pipeline runs automatically — spiders do not need to implement download logic.
 
@@ -46,7 +50,7 @@ ShadowCrawler automatically detects:
 - `<a>` links to media files  
 - Common media extensions (`.jpg`, `.png`, `.gif`, `.mp4`, `.webm`, etc.)  
 
-This behavior can be customized per extractor.
+Automatic extraction can be disabled per spider or extractor.
 
 ---
 
@@ -112,8 +116,68 @@ The media pipeline integrates with the checkpoint system:
 - Failed downloads are retried  
 - Partial downloads are cleaned up  
 - State is saved after each batch  
+- Multi‑worker crawls share the same checkpoint safely  
 
 This makes long‑running crawls safe and resumable.
+
+---
+
+## ⚙ Multi‑Worker Behavior (`--workers N`)
+
+When using multiple workers:
+
+- All workers share the same checkpoint  
+- Media items are deduplicated across workers  
+- Each worker downloads different media items  
+- No worker re‑downloads files already completed  
+- The pipeline remains thread‑safe and idempotent  
+
+Example:
+
+```bash
+shadowcrawler run --url https://example.com --workers 4
+```
+
+Workers coordinate through the checkpoint to avoid collisions.
+
+---
+
+## 🛠 CLI Flags Affecting Media
+
+### **Disable media downloads entirely**
+
+```bash
+shadowcrawler run --url https://example.com --no-media
+```
+
+Media items will still be *detected* and stored in the checkpoint,  
+but **no files will be downloaded**.
+
+### **Download media after the crawl**
+
+```bash
+shadowcrawler run --url https://example.com --download
+```
+
+This is useful when:
+
+- You want to crawl first, download later  
+- You want to run crawls on a server and download locally  
+- You want to retry failed downloads without re‑crawling  
+
+### **Output directory**
+
+```bash
+shadowcrawler run --url https://example.com --output myfolder
+```
+
+Media will be stored under:
+
+```
+myfolder/domain/images/
+myfolder/domain/videos/
+...
+```
 
 ---
 
@@ -180,6 +244,7 @@ To avoid confusion:
 - It does **not** deduplicate across domains  
 - It does **not** upload or sync media  
 - It does **not** bypass site protections  
+- It does **not** run in parallel outside the worker pool  
 
 ShadowCrawler only downloads what the spider yields or what the extractor detects.
 
@@ -192,6 +257,9 @@ The media pipeline is designed to be:
 - automatic  
 - predictable  
 - safe  
+- multi‑worker aware  
 - easy to extend  
 
 Whether you're crawling galleries, video sites, or mixed‑content pages, ShadowCrawler handles media cleanly and efficiently so you can focus on building great spiders.
+
+---
