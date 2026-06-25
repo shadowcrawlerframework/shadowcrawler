@@ -6,10 +6,10 @@ recursive-include shadowcrawler *.py
 recursive-include shadowcrawler *.txt
 recursive-include shadowcrawler *.json
 
-# Si quieres incluir assets externos (fuera del paquete)
+# Optional: include external assets (not recommended for PyPI)
 # include assets/*
 
-# Excluir basura
+# Exclude cache and compiled files
 exclude *.pyc
 exclude __pycache__/*
 exclude shadowcrawler/__pycache__/*
