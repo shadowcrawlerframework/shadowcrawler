@@ -1,3 +1,7 @@
+---
+
+# **CHANGELOG.md (versión corregida y consistente)**
+
 # Changelog
 
 All notable changes to **ShadowCrawler** will be documented in this file.
@@ -10,11 +14,13 @@ Internal development builds prior to **4.1.0** are not listed here.
 ## [4.1.0] — Initial Public Release
 
 ### Added
-- Full modular crawling engine with domain‑aware spider selection.
-- Hybrid fetcher (HTTP + Playwright) with automatic mode switching.
-- Persistent authentication system with session storage.
-- Media extraction pipeline (images, videos, GIFs, files).
-- Checkpointing system for safe crawl resuming.
+- Full modular crawling engine with domain‑aware spider selection.  
+- Hybrid fetcher (HTTP + Playwright) with automatic mode switching.  
+- Persistent authentication system with session storage.  
+- Media extraction pipeline (images, videos, GIFs, files).  
+- Checkpointing system for safe crawl resuming.  
+- **Multi‑worker crawling support (`--workers N`).**  
+- **Forced browser mode flag (`--force-browser`).**  
 - CLI toolkit:
   - `run`
   - `resume`
@@ -30,7 +36,7 @@ Internal development builds prior to **4.1.0** are not listed here.
   - HTTPNewsSpider  
   - GallerySpider  
   - AuthBrowserDemoSpider
-- Logging improvements and structured output.
+- Logging improvements and structured output.  
 - Initial documentation and project assets.
 
 ### Notes
@@ -48,3 +54,5 @@ Future releases will include:
 - Cloud runner  
 - Spider templates  
 - Auto‑throttling  
+
+---
