@@ -1,7 +1,5 @@
 ---
 
-# **CHANGELOG.md (versión corregida y consistente)**
-
 # Changelog
 
 All notable changes to **ShadowCrawler** will be documented in this file.
