@@ -1,3 +1,5 @@
+---
+
 # Spiders in ShadowCrawler
 
 ShadowCrawler uses a **domain‑aware, modular spider architecture**.  
@@ -15,6 +17,7 @@ A **Spider** is a Python class that:
 - Defines how to fetch pages (HTTP or browser)  
 - Parses responses and yields data  
 - Optionally handles login or browser logic  
+- Coordinates with extractors and auth handlers  
 
 All spiders inherit from:
 
@@ -62,8 +65,8 @@ class QuotesSpider(SpiderBase):
 
 A spider must implement:
 
-- `parse(response)` → yields data or new URLs  
-- Optional helpers (login, pagination, browser logic, etc.)
+- `parse(response)` → yields data, media, or new URLs  
+- Optional helpers (pagination, login logic, browser overrides, etc.)
 
 ---
 
@@ -103,6 +106,13 @@ def use_browser(self, url, type_):
     return "/login" in url
 ```
 
+CLI flags such as:
+
+- `--force-browser`  
+- `--force-http`  
+- `--show-browser`  
+
+…override spider preferences.  
 For full details, see **FETCH_MODES.md**.
 
 ---
@@ -120,6 +130,9 @@ ShadowCrawler will:
 - Load session data  
 - Attempt login if needed  
 - Switch to browser mode when required  
+- Share the authenticated session with all workers  
+
+Authentication always runs **before** the crawl begins.
 
 Full details are in **AUTH.md**.
 
@@ -134,7 +147,26 @@ Spiders automatically extract:
 - GIFs  
 - Downloadable files  
 
-No extra code is needed unless you want custom behavior.
+This is handled by the **media pipeline**, which:
+
+- Normalizes filenames  
+- Organizes directories  
+- Avoids duplicates  
+- Works with multi‑worker crawls  
+
+Spiders can disable automatic extraction:
+
+```python
+auto_extract_media = False
+```
+
+Or yield media manually:
+
+```python
+yield response.as_media(url)
+```
+
+Full details in **MEDIA_PIPELINE.md**.
 
 ---
 
@@ -149,6 +181,21 @@ if next_page:
 ```
 
 Or use custom logic depending on the site.
+
+---
+
+## ⚙ Multi‑Worker Behavior (`--workers N`)
+
+Spiders do **not** need to change anything to support multi‑worker crawling.
+
+The engine handles:
+
+- Queue distribution  
+- Deduplication  
+- Shared checkpointing  
+- Shared session state  
+
+Spiders remain simple and deterministic.
 
 ---
 
@@ -211,11 +258,13 @@ This is recommended for complex sites.
 - Defines parsing logic  
 - Controls fetch mode  
 - Coordinates with extractor and auth  
+- Yields data, media, and new URLs  
 
 ### **SiteExtractor (`MyspiderExtractor.py`)**
 - Handles CSS/XPath extraction  
 - Normalizes data  
 - Provides helper methods for parsing  
+- Can customize media extraction  
 
 ### **AuthHandler (`MyspiderAuth.py`)**
 - Manages login flows  
@@ -263,3 +312,5 @@ They are designed to be:
 - easy to extend  
 
 Whether you're scraping static pages or complex dynamic sites, ShadowCrawler gives you the tools to build clean, maintainable spiders with minimal boilerplate.
+
+---
