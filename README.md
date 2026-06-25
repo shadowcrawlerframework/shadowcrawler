@@ -1,53 +1,67 @@
+<p align="center">
+  <img src="assets/banner-shadowcrawler.png" alt="ShadowCrawler Banner" width="100%"/>
+</p>
+
+# 🌙 ShadowCrawler  
+**A modern, domain‑aware, hybrid web crawling framework for Python.**
+
+<p align="center">
+  <img src="https://img.shields.io/badge/License-BUSL--1.1-blue" />
+  <img src="https://img.shields.io/badge/Python-3.10%2B-blue" />
+  <img src="https://img.shields.io/badge/Status-Active-brightgreen" />
+</p>
+
+ShadowCrawler began as a small personal project — a quiet gift, a spark of affection — and unexpectedly grew into a full, modular, production‑ready crawling framework.  
+It was built with care, curiosity, and intention.  
+*Originally created for my guiding star, and built with the help of my AI copilot — a companion in code, clarity, and curiosity.*
+
 ---
 
-ShadowCrawler  
-A modern, domain‑aware, hybrid web crawling framework for Python
+## ✨ Features
 
-ShadowCrawler is a modular, extensible crawling framework designed for developers who want full control over how websites are fetched, parsed, and processed.  
-It combines speed, modularity, and browser‑level extraction into a single, clean architecture.
+- Automatic domain detection — run spiders without specifying them manually.  
+- Hybrid fetcher (HTTP + Playwright) — fast when possible, browser when needed.  
+- Persistent authentication — login once, session saved automatically.  
+- Modular spiders — clean per‑domain architecture.  
+- Media pipeline — automatic image/video/file extraction.  
+- Checkpointing — resume crawls safely.  
+- Full CLI toolkit — run, resume, inspect, list, stats, version.  
 
-ShadowCrawler began as a small personal project — a quiet gift, a spark of affection — and unexpectedly grew into a full, production‑ready crawling framework.  
-It was built with care, curiosity, and intention.  
-Originally created for my guiding star, and built with the help of my AI copilot — a companion in code, clarity, and curiosity.
+---
 
-------------------------------------------------------------
-✨ Features
-------------------------------------------------------------
+<p align="center">
+  <img src="assets/logo-shadowcrawler.svg" alt="ShadowCrawler Logo" width="160"/>
+</p>
 
-- Automatic domain detection — run spiders without specifying them manually  
-- Hybrid fetcher (HTTP + Playwright) — fast when possible, browser when needed  
-- Persistent authentication — login once, session saved automatically  
-- Modular spiders — clean per‑domain architecture  
-- Media pipeline — automatic image/video/file extraction  
-- Checkpointing — resume crawls safely  
-- Full CLI toolkit — run, resume, inspect, list, stats, version  
+## 🚀 Installation
 
-------------------------------------------------------------
-🚀 Installation
-------------------------------------------------------------
-
+```bash
 pip install shadowcrawler
+```
 
-------------------------------------------------------------
-⚡ Quickstart
-------------------------------------------------------------
+## ⚡ Quickstart
 
 Run with automatic spider detection:
 
-shadowcrawler run --url [https://quotes.toscrape.com](https://quotes.toscrape.com)
+```bash
+shadowcrawler run --url https://quotes.toscrape.com
+```
 
 Run with browser mode:
 
-shadowcrawler run --url [https://demoqa.com/login](https://demoqa.com/login) --browser
+```bash
+shadowcrawler run --url https://demoqa.com/login --browser
+```
 
 List spiders:
 
+```bash
 shadowcrawler spiders list
+```
 
-------------------------------------------------------------
-🕷 Creating a Spider
-------------------------------------------------------------
+## 🕷 Creating a Spider
 
+```python
 from shadowcrawler.core.spider_base import SpiderBase
 
 class QuotesSpider(SpiderBase):
@@ -59,47 +73,45 @@ class QuotesSpider(SpiderBase):
                 "text": quote.css(".text::text").get(),
                 "author": quote.css(".author::text").get(),
             }
+```
 
-------------------------------------------------------------
-🔍 Domain Autodetection
-------------------------------------------------------------
+## 🔍 Domain Autodetection
 
-shadowcrawler automatically selects the correct spider based on the URL:
+ShadowCrawler automatically selects the correct spider based on the URL:
 
-shadowcrawler run --url [https://example.com/page](https://example.com/page)
+```bash
+shadowcrawler run --url https://example.com/page
+```
 
 If your spider declares:
 
+```python
 domain = "example.com"
+```
 
 …it will be used automatically.
 
-------------------------------------------------------------
-🌐 Fetch Modes
-------------------------------------------------------------
+## 🌐 Fetch Modes
 
-HTTP Mode (default)  
+**HTTP Mode (default)**  
 Fast, lightweight, ideal for most sites.
 
-Browser Mode (Playwright)  
+**Browser Mode**  
+Powered by Playwright.  
 Used automatically when:
 
 - login is required  
 - the site is dynamic  
 - the spider requests browser mode  
 
-------------------------------------------------------------
-🔐 Persistent Authentication
-------------------------------------------------------------
+## 🔐 Persistent Authentication
 
 - Login once  
 - Session saved to JSON  
 - BrowserManager loads it automatically  
 - AuthHandler detects login state  
 
-------------------------------------------------------------
-🖼 Media Pipeline
-------------------------------------------------------------
+## 🖼 Media Pipeline
 
 Automatically extracts:
 
@@ -108,36 +120,34 @@ Automatically extracts:
 - GIFs  
 - downloadable files  
 
-------------------------------------------------------------
-🧰 CLI Commands
-------------------------------------------------------------
+## 🧰 CLI Commands
 
-shadowcrawler run  
-shadowcrawler resume  
-shadowcrawler download  
-shadowcrawler spiders list  
-shadowcrawler spiders create  
-shadowcrawler inspect  
-shadowcrawler stats  
-shadowcrawler version  
+```bash
+shadowcrawler run
+shadowcrawler resume
+shadowcrawler download
+shadowcrawler spiders list
+shadowcrawler spiders create
+shadowcrawler inspect
+shadowcrawler stats
+shadowcrawler version
+```
 
-------------------------------------------------------------
-📁 Project Structure
-------------------------------------------------------------
+## 📁 Project Structure
 
-shadowcrawler/  
-  core/  
-  spiders/  
-  site_extractors/  
-  auth/  
-  cli/  
-  models/  
-  parsing/  
-  tools/  
+```bash
+shadowcrawler/
+  core/
+  spiders/
+  site_extractors/
+  auth/
+  cli/
+  models/
+  parsing/
+  tools/
+```
 
-------------------------------------------------------------
-🕸 Included Example Spiders
-------------------------------------------------------------
+## 🕸 Included Example Spiders
 
 - QuotesSpider  
 - WikiSpider  
@@ -145,9 +155,9 @@ shadowcrawler/
 - GallerySpider  
 - AuthBrowserDemoSpider  
 
-------------------------------------------------------------
-🗺 Roadmap
-------------------------------------------------------------
+---
+
+## 🗺 Roadmap
 
 - [ ] PyPI release  
 - [ ] Plugin system  
@@ -157,11 +167,11 @@ shadowcrawler/
 - [ ] Spider templates  
 - [ ] Auto‑throttling  
 
-------------------------------------------------------------
-📦 itch.io Distribution
-------------------------------------------------------------
+---
 
-ShadowCrawler is also distributed through itch.io, where you can get:
+## 📦 ShadowCrawler on itch.io
+
+ShadowCrawler is distributed through itch.io, where you can get:
 
 - The latest stable release  
 - Optional Pro features  
@@ -169,23 +179,28 @@ ShadowCrawler is also distributed through itch.io, where you can get:
 - Early access builds  
 - Support the project directly  
 
-------------------------------------------------------------
-☕ Support the Project
-------------------------------------------------------------
+👉 Download or support the project on itch.io:  
+https://shadowcrawlerframework.itch.io/shadowcrawler
 
-If ShadowCrawler has helped you or you want to support future development, you can leave a tip on Ko‑fi.  
+---
+
+## ☕ Support the Project
+
+If ShadowCrawler has helped you or you want to support future development, you can leave a tip on Ko‑fi.
+
 Every contribution helps keep the project alive and evolving.
 
-Support on Ko‑fi:  
-`https://ko-fi.com/shadowcrawlerframework`
+<p align="left">
+  <a href="https://ko-fi.com/shadowcrawlerframework" target="_blank">
+    <img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="Support on Ko-fi" />
+  </a>
+</p>
 
-------------------------------------------------------------
-📜 License
-------------------------------------------------------------
+---
+
+## 📜 License
 
 ShadowCrawler is licensed under the Business Source License 1.1 (BUSL‑1.1).  
 It will convert to Apache 2.0 on:
 
-November 16, 2030
-
----
+**November 16, 2030 — Allan’s 50th birthday.**
