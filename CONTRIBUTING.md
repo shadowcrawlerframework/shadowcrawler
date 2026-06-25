@@ -1,3 +1,4 @@
+```markdown
 # Contributing to ShadowCrawler
 
 Thank you for your interest in contributing to **ShadowCrawler**!  
@@ -90,6 +91,8 @@ A good PR:
 - Is focused on a single change.  
 - Includes tests when applicable.  
 - Updates documentation if needed.  
+- **Keeps CLI flags, docs, and examples consistent**  
+  (e.g., `--workers`, `--force-browser`).  
 - Passes all existing tests.  
 - Explains the motivation behind the change.  
 
@@ -123,6 +126,7 @@ Documentation improvements are always welcome:
 - Architecture explanations  
 - Diagrams  
 - Tutorials  
+- **Updates to CLI docs when adding or modifying flags**  
 
 Even small fixes (typos, formatting, clarity) are valuable.
 
@@ -134,3 +138,6 @@ ShadowCrawler started as a personal project and grew thanks to curiosity, intent
 Your contribution — big or small — helps shape its future.
 
 Thank you for being part of it.
+```
+
+---
