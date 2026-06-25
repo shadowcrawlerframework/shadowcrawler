@@ -5,6 +5,7 @@ description = "ShadowCrawler — High-performance modular crawling framework"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { file = "LICENSE" }
+long_description_content_type = "text/markdown"
 
 authors = [
     { name = "Allan Mancera" }
@@ -22,9 +23,9 @@ keywords = [
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
-	"Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-	"Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.14",
     "License :: Free To Use But Restricted",
     "Operating System :: OS Independent",
     "Development Status :: 4 - Beta",
