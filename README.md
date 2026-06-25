@@ -37,6 +37,7 @@ It was built with care, curiosity, and intention.
 - Media pipeline — automatic image/video/file extraction.  
 - Checkpointing — resume crawls safely.  
 - Full CLI toolkit — run, resume, inspect, list, stats, version.  
+- Multi‑worker crawling (`--workers N`).  
 
 ---
 
@@ -62,10 +63,16 @@ Run with automatic spider detection:
 shadowcrawler run --url https://quotes.toscrape.com
 ```
 
-Run with browser mode:
+Run with forced browser mode:
 
 ```bash
-shadowcrawler run --url https://demoqa.com/login --browser
+shadowcrawler run --url https://demoqa.com/login --force-browser
+```
+
+Run with multiple workers:
+
+```bash
+shadowcrawler run --url https://quotes.toscrape.com --workers 4
 ```
 
 List spiders:
@@ -118,8 +125,14 @@ domain = "example.com"
 Fast, lightweight, ideal for most sites.
 
 ### **Browser Mode**  
-Powered by Playwright.  
-Used automatically when:
+Powered by Playwright.
+
+You can control browser usage via flags:
+
+- `--force-browser` → always use Playwright  
+- `--workers N` → run multiple concurrent workers  
+
+Browser mode is used automatically when:
 
 - login is required  
 - the site is dynamic  
