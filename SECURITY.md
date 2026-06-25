@@ -1,3 +1,5 @@
+---
+
 # Security Policy
 
 ## Supported Versions
@@ -49,14 +51,22 @@ ShadowCrawler **cannot** prevent misuse of session files if a user’s machine i
 ---
 
 ## Responsible Use
+
 ShadowCrawler must not be used for:
 
 - Illegal activities  
 - Unauthorized access to systems  
 - Harassment, abuse, or targeted harm  
 - Violations of terms of service of any website  
+- Bypassing access controls or protections  
 
-Users are responsible for ensuring their use complies with local laws, ethical standards, and platform policies.
+Users are responsible for:
+
+- Ensuring compliance with local laws and regulations  
+- Respecting website policies, including robots.txt and rate limits  
+- Managing the impact of their crawls, especially when using multiple workers  
+
+ShadowCrawler does not transmit data to third parties and does not perform any network activity beyond what the user explicitly requests.
 
 ---
 
@@ -76,4 +86,4 @@ By using this software, users agree that:
 
 - They are responsible for securing their environment  
 - They understand the risks of storing session data locally  
-- They will not hold the maintainers liable for misuse, leaks, or compromise of data stored on their own systems  
+- They will not hold the maintainers liable for misuse, leaks, or compromise of data stored on their own systems
