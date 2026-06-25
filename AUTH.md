@@ -1,3 +1,5 @@
+---
+
 # Authentication in ShadowCrawler
 
 ShadowCrawler includes a flexible and modular authentication system designed to support login flows, persistent sessions, and browser‑based authentication when required.
@@ -13,9 +15,15 @@ Authentication in ShadowCrawler is handled by **AuthHandlers**, which are small 
 - Logging into a website  
 - Detecting whether the user is already authenticated  
 - Saving and loading session data  
-- Requesting browser mode when needed  
+- Requesting browser mode when needed (`use_browser_for_auth`)  
 
 AuthHandlers are optional — spiders that do not require login do not need one.
+
+Authentication runs **before the crawl begins**, ensuring that:
+
+- All workers share the same authenticated session  
+- Browser mode is activated if required  
+- Session files are loaded and saved consistently  
 
 ---
 
@@ -53,6 +61,67 @@ Optional helpers:
 
 ---
 
+## 🌐 Browser‑Based Authentication
+
+Some sites require:
+
+- JavaScript execution  
+- CAPTCHA handling  
+- Dynamic login flows  
+- Multi‑step authentication  
+
+In these cases, AuthHandlers can request browser mode:
+
+```python
+use_browser_for_auth = True
+```
+
+This overrides:
+
+- Spider fetch mode  
+- Default HTTP mode  
+- CLI flags (unless the user explicitly forces HTTP)
+
+ShadowCrawler will:
+
+1. Launch Playwright  
+2. Load session state if available  
+3. Run `is_logged_in()`  
+4. If not logged in, run `login()`  
+5. Save updated session state  
+6. Close the browser  
+7. Start the crawl (HTTP or browser depending on flags)
+
+---
+
+## ⚙️ Interaction With CLI Flags
+
+### **`--force-browser`**
+If the user runs:
+
+```bash
+shadowcrawler run --url https://example.com --force-browser
+```
+
+Then:
+
+- Browser mode is used for **all requests**, regardless of spider or auth settings.  
+- AuthHandlers still run first, using the same browser instance.  
+
+### **`--workers N`**
+Authentication is performed **before** workers start.
+
+This ensures:
+
+- All workers share the same session  
+- Cookies and tokens are consistent  
+- No worker attempts to log in independently  
+- Login happens only once  
+
+Workers never run `login()` or `is_logged_in()`.
+
+---
+
 ## 🗂 Session Storage
 
 ShadowCrawler stores session data locally in a JSON file.
@@ -82,31 +151,6 @@ For more details, see **SECURITY.md**.
 
 ---
 
-## 🌐 Browser‑Based Authentication
-
-Some sites require:
-
-- JavaScript execution  
-- CAPTCHA handling  
-- Dynamic login flows  
-- Multi‑step authentication  
-
-In these cases, AuthHandlers can request browser mode:
-
-```python
-use_browser_for_auth = True
-```
-
-ShadowCrawler will:
-
-1. Launch Playwright  
-2. Load session state if available  
-3. Run `is_logged_in()`  
-4. If not logged in, run `login()`  
-5. Save updated session state  
-
----
-
 ## 🔄 Automatic Login Flow
 
 When a spider declares an AuthHandler:
@@ -121,7 +165,7 @@ ShadowCrawler will:
 2. Check login state  
 3. If not logged in → perform login  
 4. Save session  
-5. Continue crawling  
+5. Start the crawl (single or multi‑worker)  
 
 This process is automatic and requires no extra code in the spider.
 
@@ -216,3 +260,5 @@ The system is designed to be:
 - easy to extend  
 
 Whether you're logging into simple sites or complex dynamic platforms, AuthHandlers give you full control with minimal boilerplate.
+
+---
