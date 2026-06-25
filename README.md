@@ -1,15 +1,26 @@
+---
+
+# 🌙 ShadowCrawler  
 <p align="center">
   <img src="assets/banner-shadowcrawler.png" alt="ShadowCrawler Banner" width="100%"/>
 </p>
 
-# 🌙 ShadowCrawler  
-**A modern, domain‑aware, hybrid web crawling framework for Python.**
+<p align="center">
+  <a href="https://shadowcrawlerframework.itch.io/shadowcrawler" target="_blank">
+    <img src="https://static.itch.io/images/badge-color.svg" width="170"/>
+  </a>
+  <a href="https://ko-fi.com/shadowcrawlerframework" target="_blank">
+    <img src="https://ko-fi.com/img/githubbutton_sm.svg" width="170"/>
+  </a>
+</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/License-BUSL--1.1-blue" />
   <img src="https://img.shields.io/badge/Python-3.10%2B-blue" />
   <img src="https://img.shields.io/badge/Status-Active-brightgreen" />
 </p>
+
+**A modern, domain‑aware, hybrid web crawling framework for Python.**
 
 ShadowCrawler began as a small personal project — a quiet gift, a spark of affection — and unexpectedly grew into a full, modular, production‑ready crawling framework.  
 It was built with care, curiosity, and intention.  
@@ -33,11 +44,15 @@ It was built with care, curiosity, and intention.
   <img src="assets/logo-shadowcrawler.svg" alt="ShadowCrawler Logo" width="160"/>
 </p>
 
+---
+
 ## 🚀 Installation
 
 ```bash
 pip install shadowcrawler
 ```
+
+---
 
 ## ⚡ Quickstart
 
@@ -59,6 +74,8 @@ List spiders:
 shadowcrawler spiders list
 ```
 
+---
+
 ## 🕷 Creating a Spider
 
 ```python
@@ -74,6 +91,8 @@ class QuotesSpider(SpiderBase):
                 "author": quote.css(".author::text").get(),
             }
 ```
+
+---
 
 ## 🔍 Domain Autodetection
 
@@ -91,12 +110,14 @@ domain = "example.com"
 
 …it will be used automatically.
 
+---
+
 ## 🌐 Fetch Modes
 
-**HTTP Mode (default)**  
+### **HTTP Mode (default)**  
 Fast, lightweight, ideal for most sites.
 
-**Browser Mode**  
+### **Browser Mode**  
 Powered by Playwright.  
 Used automatically when:
 
@@ -104,12 +125,16 @@ Used automatically when:
 - the site is dynamic  
 - the spider requests browser mode  
 
+---
+
 ## 🔐 Persistent Authentication
 
 - Login once  
 - Session saved to JSON  
 - BrowserManager loads it automatically  
 - AuthHandler detects login state  
+
+---
 
 ## 🖼 Media Pipeline
 
@@ -119,6 +144,8 @@ Automatically extracts:
 - videos  
 - GIFs  
 - downloadable files  
+
+---
 
 ## 🧰 CLI Commands
 
@@ -132,6 +159,8 @@ shadowcrawler inspect
 shadowcrawler stats
 shadowcrawler version
 ```
+
+---
 
 ## 📁 Project Structure
 
@@ -147,6 +176,8 @@ shadowcrawler/
   tools/
 ```
 
+---
+
 ## 🕸 Included Example Spiders
 
 - QuotesSpider  
@@ -159,7 +190,6 @@ shadowcrawler/
 
 ## 🗺 Roadmap
 
-- [ ] PyPI release  
 - [ ] Plugin system  
 - [ ] Distributed crawling  
 - [ ] Dashboard / Web UI  
@@ -179,8 +209,11 @@ ShadowCrawler is distributed through itch.io, where you can get:
 - Early access builds  
 - Support the project directly  
 
-👉 Download or support the project on itch.io:  
-https://shadowcrawlerframework.itch.io/shadowcrawler
+<p align="left">
+  <a href="https://shadowcrawlerframework.itch.io/shadowcrawler" target="_blank">
+    <img src="https://static.itch.io/images/badge-color.svg" alt="Download on itch.io" width="200"/>
+  </a>
+</p>
 
 ---
 
@@ -203,4 +236,6 @@ Every contribution helps keep the project alive and evolving.
 ShadowCrawler is licensed under the Business Source License 1.1 (BUSL‑1.1).  
 It will convert to Apache 2.0 on:
 
-**November 16, 2030 — Allan’s 50th birthday.**
+**November 16, 2030**
+
+---
