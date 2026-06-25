@@ -1,3 +1,5 @@
+---
+
 # ShadowCrawler Architecture
 
 ShadowCrawler is built around a **modular, domain‑aware crawling engine** designed for clarity, extensibility, and real‑world scraping workflows.  
@@ -17,6 +19,7 @@ ShadowCrawler is composed of the following major subsystems:
 - **Media Pipeline** — downloading and processing media  
 - **Checkpointing System** — resume crawls safely  
 - **CLI Toolkit** — user‑facing interface for running spiders  
+- **Worker Pool** — multi‑worker concurrent crawling (`--workers N`)  
 
 Each subsystem is independent and replaceable.
 
@@ -32,8 +35,34 @@ The engine is responsible for:
 - Passing responses to spiders  
 - Coordinating extractors, auth, and media pipeline  
 - Saving checkpoints and session data  
+- Distributing work across multiple workers when `--workers` is enabled  
 
 The engine is intentionally minimal and predictable.
+
+---
+
+## ⚙️ Worker Pool (Multi‑Worker Crawling)
+
+ShadowCrawler supports concurrent crawling through a **worker pool**, activated via:
+
+```bash
+shadowcrawler run --url https://example.com --workers 4
+```
+
+The worker system:
+
+- Spawns **N asynchronous workers**  
+- Each worker fetches, parses, and schedules new URLs  
+- Shares a centralized frontier (queue)  
+- Ensures deduplication across all workers  
+- Works with both HTTP and Browser fetchers  
+- Automatically integrates with checkpointing  
+
+Workers dramatically improve throughput on:
+
+- media‑heavy sites  
+- paginated content  
+- large collections of static pages  
 
 ---
 
@@ -57,7 +86,7 @@ The engine decides which fetcher to use based on:
 
 - Spider’s `fetch_mode`  
 - `use_browser()` overrides  
-- CLI flags  
+- CLI flags (`--force-browser`)  
 - Auth requirements  
 
 Full details in **FETCH_MODES.md**.
@@ -143,6 +172,7 @@ This allows:
 - Crash recovery  
 - Long‑running crawls  
 - Incremental crawling  
+- Multi‑worker safe resume  
 
 Checkpoints are stored locally and never transmitted.
 
@@ -164,7 +194,7 @@ The CLI provides commands for:
 Example:
 
 ```bash
-shadowcrawler run --url https://example.com
+shadowcrawler run --url https://example.com --workers 4
 ```
 
 ---
@@ -211,6 +241,9 @@ ShadowCrawler’s architecture is designed to support:
 - Authenticated workflows  
 - Media‑heavy crawls  
 - Long‑running jobs  
+- Multi‑worker concurrency  
 - Custom spiders and extensions  
 
 Whether you're building simple scrapers or complex authenticated crawlers, the architecture gives you a clean, predictable foundation to work with.
+
+---
