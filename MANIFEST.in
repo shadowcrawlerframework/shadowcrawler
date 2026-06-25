@@ -1,0 +1,15 @@
+include README.md
+include LICENSE
+include CHANGELOG.md
+
+recursive-include shadowcrawler *.py
+recursive-include shadowcrawler *.txt
+recursive-include shadowcrawler *.json
+
+# Si quieres incluir assets externos (fuera del paquete)
+# include assets/*
+
+# Excluir basura
+exclude *.pyc
+exclude __pycache__/*
+exclude shadowcrawler/__pycache__/*
