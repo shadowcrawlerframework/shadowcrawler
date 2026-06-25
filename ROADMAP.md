@@ -1,3 +1,5 @@
+---
+
 # ShadowCrawler Roadmap
 
 This roadmap outlines the planned direction for ShadowCrawler after the initial public release.  
@@ -15,17 +17,22 @@ features are added when they provide clear value, improve developer experience, 
 - Fix edge‑case issues in spiders, extractors, and auth  
 - Strengthen error handling and diagnostics  
 - Ensure consistent behavior across platforms  
+- Improve multi‑worker stability and checkpoint safety  
 
 ### **2. Developer Experience Improvements**
 - Better CLI messages and debug output  
 - More helpful exceptions  
 - Cleaner scaffolding templates  
 - Optional quality‑of‑life utilities  
+- Improved fetch‑mode reasoning logs (`--debug`)  
+- Better browser‑mode visibility (`--show-browser`)  
 
 ### **3. Documentation Enhancements**
 - More examples  
 - More spider templates  
 - Clearer guides for auth, browser mode, and extractors  
+- Expanded multi‑worker documentation  
+- More real‑world spider examples  
 
 ---
 
@@ -39,6 +46,10 @@ These features may be added depending on demand, community interest, or sponsors
 - Auto‑throttling  
 - Advanced scheduling  
 - Spider marketplace / premium spiders  
+- Browser‑mode sandboxing  
+- Media pipeline parallelization  
+- Smart retry heuristics  
+- Automatic anti‑bot detection handling  
 
 ---
 
@@ -64,6 +75,7 @@ ShadowCrawler will continue to evolve with a focus on:
 - Quality over quantity  
 - Maintainability over complexity  
 - Real‑world needs over speculative features  
+- Predictable behavior over hidden magic  
 
 The goal is to keep the framework **lean, powerful, and sustainable**.
 
@@ -73,3 +85,5 @@ The goal is to keep the framework **lean, powerful, and sustainable**.
 
 Suggestions, ideas, and feedback are always welcome.  
 Open an issue or start a discussion to help shape the future of ShadowCrawler.
+
+---
