@@ -1,4 +1,5 @@
-```markdown
+---
+
 # Contributing to ShadowCrawler
 
 Thank you for your interest in contributing to **ShadowCrawler**!  
@@ -138,6 +139,5 @@ ShadowCrawler started as a personal project and grew thanks to curiosity, intent
 Your contribution — big or small — helps shape its future.
 
 Thank you for being part of it.
-```
 
 ---
