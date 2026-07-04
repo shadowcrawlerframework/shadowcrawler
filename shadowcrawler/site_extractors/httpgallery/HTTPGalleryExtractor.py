@@ -1,10 +1,20 @@
 # shadowcrawler/site_extractors/httpgallery/HTTPGalleryExtractor.py
-# ShadowCrawler v4.1.1 — HTTP Gallery Extractor (PlaceKitten Demo)
+# ShadowCrawler v4.1.3 — HTTP Gallery Extractor (PlaceKitten Demo)
 #
-# ShadowCrawler © 2024–2030 Allan Mancera
-# Licensed under the Business Source License 1.1 (BUSL‑1.1).
+# DISCLAIMER:
+# This extractor is provided **for demonstration and educational purposes only**.
+# It shows how ShadowCrawler performs HTTP-only media extraction without
+# Playwright, HTML parsing, or browser context. The extractor treats the URL
+# itself as an image source and generates additional demo URLs.
 #
-# Official ShadowCrawler v4 example extractor for HTTP-only media sources.
+# This example is intentionally simple and NOT intended for production use.
+# Real-world extractors require robust, site-specific parsing logic.
+#
+# Demonstrates:
+# - Pure HTTP media extraction
+# - URL-as-image workflows
+# - Minimalistic extractor structure
+# - Clean separation between spider and extractor
 
 from typing import Any, Dict, List, Optional
 
@@ -13,7 +23,12 @@ from shadowcrawler.site_extractors.base import SiteExtractorBase
 
 
 class HTTPGalleryExtractor(SiteExtractorBase):
-    """Minimal HTTP-only extractor for image galleries (PlaceKitten demo).
+    """
+    HTTPGalleryExtractor — minimal HTTP-only extractor for image galleries.
+
+    This extractor demonstrates how ShadowCrawler handles HTTP-only media
+    extraction without HTML parsing or browser context. It treats the URL
+    itself as an image source and generates additional demo image URLs.
 
     Responsibilities:
         - Treat the URL itself as an image.

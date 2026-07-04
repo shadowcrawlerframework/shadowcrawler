@@ -1,5 +1,5 @@
 # shadowcrawler/core/downloader.py
-# ShadowCrawler v4.1.1 — Universal Downloader
+# ShadowCrawler v4.1.3 — Universal Downloader
 #
 # ShadowCrawler © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).
@@ -19,6 +19,16 @@
 #   - Fix: Playwright .body() instead of .read()
 #   - Fix: rename() with retry for WinError 32
 #   - No site‑specific logic (spiders provide everything)
+#
+# Notes:
+#   - Downloads media items produced by MediaExtractor.
+#   - Does NOT crawl pages; Engine and spiders handle navigation.
+#   - Does NOT parse HTML/JSON; extractors handle content extraction.
+#   - Responsible only for saving bytes to disk and reporting status.
+#   - Supports retries, timeouts, and basic HTTP error handling.
+#   - Fully compatible with checkpointing (stateless between downloads).
+#   - Does NOT modify media metadata; only stores the raw file.
+
 
 import os
 import hashlib

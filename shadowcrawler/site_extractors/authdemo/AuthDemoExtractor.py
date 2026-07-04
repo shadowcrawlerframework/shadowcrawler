@@ -1,64 +1,69 @@
 # shadowcrawler/site_extractors/authdemo/AuthDemoExtractor.py
-# ShadowCrawler v4.1.1 — Auth Demo Extractor
+# ShadowCrawler v4.1.3 — HTTP-only extractor for AuthDemoSpider
 #
-# ShadowCrawler © 2024–2030 Allan Mancera
-# Licensed under the Business Source License 1.1 (BUSL‑1.1).
+# DISCLAIMER:
+# This extractor is provided **for demonstration and educational purposes only**.
+# It shows how to parse plain HTTP responses using RequestsFetcher, without Playwright.
 #
-# Minimal JSON-based extractor for the AuthDemoSpider example.
+# This example is intentionally simple and NOT intended for production use.
+# Real-world extractors require robust, site-specific parsing logic.
+#
+# Demonstrates:
+# - Parsing plain HTTP responses
+# - JSON fallback
+# - Text fallback
+# - No browser or JavaScript context
 
-import json
-from typing import Any, Dict, Optional
-
-from shadowcrawler.site_extractors.base import SiteExtractorBase
+from typing import Any, Dict
+from shadowcrawler.logging import get_logger
 
 
-class AuthDemoExtractor(SiteExtractorBase):
-    """Extractor for the AuthDemoSpider (manual login demo).
+class AuthDemoExtractor:
+    """
+    HTTP-only extractor for AuthDemoSpider.
 
-    Responsibilities:
-        - Parse JSON or fallback to raw text.
-        - Respect spider-defined scope ("LOGIN", "PROTECTED").
-        - Never enqueue navigation automatically.
-        - Never make site decisions.
-        - Return a normalized extraction dict.
-
-    Notes:
-        This extractor is intentionally minimal. It demonstrates how
-        authentication flows can be modeled without forcing navigation.
+    This extractor receives a requests.Response object and
+    extracts basic information such as status code, JSON data,
+    and raw text. It demonstrates how extraction works without
+    browser context.
     """
 
-    # ------------------------------------------------------------
-    # EXTRACT
-    # ------------------------------------------------------------
-    def extract(
-        self,
-        response: Any,
-        url: Optional[str] = None,
-        scope: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        print("📄 AuthDemoExtractor ejecutado en:", url)
+    def __init__(self, spider_handle: str) -> None:
+        self.handle = spider_handle
+        self.logger = get_logger("extractor")
 
-        # Try to parse JSON
+    def extract(self, response: Any, url: str, scope: str) -> Dict[str, Any]:
+        self.logger.info(f"Running AuthDemoExtractor on: {url}")
+
+        # ------------------------------------------------------------
+        # 1) Basic response info
+        # ------------------------------------------------------------
+        status = getattr(response, "status_code", None)
+        text = getattr(response, "text", None)
+
+        # ------------------------------------------------------------
+        # 2) Try JSON if available
+        # ------------------------------------------------------------
+        json_data = None
         try:
-            data = response.json()
+            json_data = response.json()
         except Exception:
-            data = {"raw": response.text}
+            pass
 
-        links: list = []
-        next_pages: list = []
-        media: list = []
-
-        # LOGIN → next step is protected page
-        if scope == "LOGIN":
-            next_pages.append("https://httpbin.org/anything/protected")
-
-        # PROTECTED → mark as authenticated content
-        if scope == "PROTECTED":
-            data["protected"] = True
+        # ------------------------------------------------------------
+        # 3) Build result
+        # ------------------------------------------------------------
+        data = {
+            "url": url,
+            "status": status,
+            "scope": scope,
+            "json": json_data,
+            "text": text if json_data is None else None,
+        }
 
         return {
             "data": data,
-            "links": links,
-            "next_pages": next_pages,
-            "media": media,
+            "links": [],
+            "next_pages": [],
+            "media": [],
         }

@@ -1,5 +1,5 @@
 # shadowcrawler/auth/base_auth.py
-# ShadowCrawler v4.1.1 — Base Authentication Handler (Browser / Playwright)
+# ShadowCrawler v4.1.3 — Base Authentication Handler (Browser / Playwright)
 #
 # ShadowCrawler — Copyright © 2024–2030 Allan Mancera
 # This software is licensed under the Business Source License 1.1 (BUSL‑1.1).

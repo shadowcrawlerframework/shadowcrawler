@@ -1,10 +1,19 @@
 # shadowcrawler/site_extractors/httpnews/HTTPNewsExtractor.py
-# ShadowCrawler v4.1.1 — HTTP News Extractor (Hacker News Example)
+# ShadowCrawler v4.1.3 — HTTP News Extractor (Hacker News Example)
 #
-# ShadowCrawler © 2024–2030 Allan Mancera
-# Licensed under the Business Source License 1.1 (BUSL‑1.1).
+# DISCLAIMER:
+# This extractor is provided **for demonstration and educational purposes only**.
+# It shows how ShadowCrawler parses static HTML news pages such as Hacker News,
+# extracting post entries, titles, and pagination links using BeautifulSoup.
 #
-# Official ShadowCrawler v4 example extractor for static HTML news sites.
+# This example is intentionally simple and NOT intended for production use.
+# Real-world news extractors require robust, site-specific parsing logic.
+#
+# Demonstrates:
+# - Static HTML parsing
+# - Extraction of <tr class="athing"> posts
+# - Pagination via “More”
+# - Clean separation between spider and extractor
 
 from typing import Any, Dict, List, Optional
 
@@ -13,12 +22,17 @@ from shadowcrawler.site_extractors.base import SiteExtractorBase
 
 
 class HTTPNewsExtractor(SiteExtractorBase):
-    """Example extractor for static HTML news pages (Hacker News).
+    """
+    HTTPNewsExtractor — example extractor for static HTML news pages.
+
+    This extractor demonstrates how ShadowCrawler parses Hacker News using
+    BeautifulSoup. It extracts page titles, post entries (<tr class="athing">),
+    and pagination links (“More”), returning a normalized extraction dict.
 
     Responsibilities:
         - Extract page title.
         - Extract post entries (<tr class="athing">).
-        - Extract pagination ("More" link).
+        - Extract pagination (“More” link).
         - Return a normalized extraction dict.
 
     Notes:

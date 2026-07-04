@@ -1,59 +1,58 @@
 # shadowcrawler/auth/authdemo/AuthDemoAuth.py
-# ShadowCrawler v4.1.1 — Example HTTP Auth Handler (RequestsFetcher)
+# ShadowCrawler v4.1.3 — HTTP Auth Handler (RequestsFetcher)
 #
-# This file is provided **as an example only**.
-# It demonstrates how to implement a simple HTTP-based login flow.
-# It is NOT intended for production use.
+# DISCLAIMER:
+# This authentication handler is provided **for demonstration and educational purposes only**.
+# It simulates a login flow using a simple POST request and a fake session cookie.
 #
-# ShadowCrawler — Copyright © 2024–2030 Allan Mancera
-# Licensed under the Business Source License 1.1 (BUSL‑1.1).
-
-"""
-Example HTTP authentication handler for httpbin.org.
-
-This module demonstrates:
-    - Sending a POST login request.
-    - Storing a fake session cookie.
-    - Persisting cookies using AuthHandlerBase.
-    - Integrating with RequestsFetcher.
-
-Notes:
-    - This handler is intentionally simple and provided **as-is**.
-    - It is meant for educational and demonstration purposes.
-    - Real-world sites require robust, site-specific implementations.
-"""
+# This example is intentionally minimal and NOT intended for production use.
+# Real-world authentication flows require robust, site-specific implementations.
+#
+# Demonstrates:
+# - Simple POST-based login
+# - Cookie persistence
+# - Session restoration
+# - Authentication without Playwright
 
 import json
 from typing import Any
-
 from shadowcrawler.auth.base import AuthHandlerBase
 
 
 class AuthDemoAuth(AuthHandlerBase):
-    """Example HTTP authentication handler for httpbin.org.
+    """
+    HTTP authentication handler for httpbin.org.
 
-    Responsibilities:
-        - Send a POST request to simulate login.
-        - Store a fake session cookie.
-        - Persist cookies using AuthHandlerBase.
-
-    This class is intentionally minimal and not production-ready.
+    This handler simulates a login by sending a POST request
+    and storing a fake session cookie. It demonstrates how
+    ShadowCrawler handles authentication without browser context.
     """
 
     LOGIN_URL: str = "https://httpbin.org/post"
 
     # ------------------------------------------------------------
+    # CHECK IF LOGIN IS REQUIRED
+    # ------------------------------------------------------------
+    def is_login_required(self, session: Any) -> bool:
+        """
+        Determines whether the user is already logged in.
+
+        For this demo:
+            - If the session contains our fake cookie, we consider it logged in.
+        """
+        return "session" not in session.cookies
+
+    # ------------------------------------------------------------
     # PERFORM LOGIN
     # ------------------------------------------------------------
     def login(self, session: Any, **kwargs: Any) -> bool:
-        """Perform a simple POST login to httpbin.org.
+        """
+        Perform a simple POST login to httpbin.org.
 
-        Args:
-            session: A requests.Session instance.
-            **kwargs: Optional username/password overrides.
-
-        Returns:
-            True if login succeeded, False otherwise.
+        This is a minimal example:
+            - Send POST with username/password
+            - Save a fake cookie
+            - Persist cookie to disk
         """
         username = kwargs.get("username", "allan")
         password = kwargs.get("password", "1234")
@@ -61,7 +60,6 @@ class AuthDemoAuth(AuthHandlerBase):
         payload = {"username": username, "password": password}
 
         print("🔐 Sending login POST to:", self.LOGIN_URL)
-
         resp = session.post(self.LOGIN_URL, json=payload)
 
         if resp.status_code != 200:
@@ -70,22 +68,38 @@ class AuthDemoAuth(AuthHandlerBase):
 
         # Fake session cookie for demonstration
         session_cookie = f"{username}_{password}"
-
         print("✅ Login OK, saving cookie:", session_cookie)
 
+        # Save cookies in memory
         self.cookies = {"session": session_cookie}
+
+        # Persist cookies to disk
         self.save_session()
+
+        # Inject into session immediately
+        session.cookies.update(self.cookies)
 
         return True
 
     # ------------------------------------------------------------
-    # INJECT COOKIES
+    # LOAD SESSION (NO ARGUMENTS)
+    # ------------------------------------------------------------
+    def load_session(self) -> None:
+        """
+        Load cookies from disk into memory.
+
+        AuthHandlerBase handles reading the JSON file.
+        """
+        super().load_session()
+
+    # ------------------------------------------------------------
+    # INJECT COOKIES INTO SESSION
     # ------------------------------------------------------------
     def inject(self, session: Any) -> None:
-        """Inject stored cookies into the requests.Session.
+        """
+        Inject stored cookies into the requests.Session.
 
-        Args:
-            session: A requests.Session instance.
+        This is called automatically by the engine when needed.
         """
         if self.cookies:
             session.cookies.update(self.cookies)

@@ -1,5 +1,5 @@
 # shadowcrawler/core/dedupe_index.py
-# ShadowCrawler v4.1.1 — Dedupe Index
+# ShadowCrawler v4.1.3 — Dedupe Index
 #
 # ShadowCrawler © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).

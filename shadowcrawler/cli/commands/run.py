@@ -1,5 +1,5 @@
 # shadowcrawler/cli/commands/run.py
-# ShadowCrawler v4.1.1 — Run a New Crawl Session
+# ShadowCrawler v4.1.3 — Run a New Crawl Session
 #
 # ShadowCrawler — Copyright © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).

@@ -1,10 +1,18 @@
 # shadowcrawler/site_extractors/wiki/WikiExtractor.py
-# ShadowCrawler v4.1.1 — Wikipedia Extractor (Official Example)
+# ShadowCrawler v4.1.3 — Wikipedia Extractor (Ultra Deep Mode v2)
 #
-# ShadowCrawler © 2024–2030 Allan Mancera
-# Licensed under the Business Source License 1.1 (BUSL‑1.1).
+# DISCLAIMER:
+# This extractor is provided **for demonstration and educational purposes only**.
+# It shows how ShadowCrawler performs browser-based extraction on large,
+# structured sites such as Wikipedia, using Playwright to render dynamic
+# content and a classification model for ARTICLE / CATEGORY / FILE / GENERIC.
 #
-# Official ShadowCrawler v4 example extractor for Wikipedia.
+# Ultra Deep Mode v2:
+# - Espera activa para lazy-loading en categorías
+# - Recaptura del DOM después de que Wikipedia cargue artículos
+# - Extracción profunda de enlaces en categorías y artículos
+# - Soporte para /wiki/, /w/index.php, Category:, File:, Portal:, List_of_
+# - Crawling profundo real sin modificar el spider
 
 from typing import Any, Dict, List, Optional
 
@@ -13,13 +21,20 @@ from shadowcrawler.site_extractors.base import SiteExtractorBase
 
 
 class WikiExtractor(SiteExtractorBase):
-    """Example extractor for Wikipedia pages.
+    """
+    WikiExtractor — Ultra Deep Mode v2 extractor for Wikipedia.
+
+    This extractor demonstrates how ShadowCrawler parses fully rendered
+    Wikipedia pages using Playwright. It extracts titles, infoboxes, main
+    content, and internal links — including deep-mode support for /wiki/,
+    /w/index.php, Category:, File:, Portal:, and List_of_ pages, with
+    explicit handling of lazy-loaded category content.
 
     Responsibilities:
         - Extract title (<h1 id="firstHeading">)
         - Extract infobox (table.infobox)
         - Extract main content (div#mw-content-text)
-        - Extract internal links (/wiki/…)
+        - Extract internal links (Ultra Deep Mode v2)
         - Return a normalized extraction dict
 
     Notes:
@@ -40,9 +55,46 @@ class WikiExtractor(SiteExtractorBase):
         url: Optional[str] = None,
         scope: Optional[Any] = None,
     ) -> Dict[str, Any]:
-        print("🔥 WikiExtractor ejecutado en:", url)
+        print("🚀 WikiExtractor (Ultra Deep Mode v2) ejecutado en:", url)
 
-        html = response.html or response.text or ""
+        page = getattr(response, "page", None)
+
+        # ------------------------------------------------------------
+        # ESPERA ACTIVA PARA CATEGORÍAS (lazy-loading)
+        # ------------------------------------------------------------
+        if page is not None and scope == "CATEGORY":
+            try:
+                page.evaluate(
+                    """
+                    return new Promise(resolve => {
+                        const done = () => {
+                            const el = document.querySelector('#mw-pages');
+                            if (el && el.querySelectorAll('a').length > 10) {
+                                resolve(true);
+                            } else {
+                                setTimeout(done, 300);
+                            }
+                        };
+                        done();
+                    });
+                    """
+                )
+            except Exception:
+                pass
+
+        # ------------------------------------------------------------
+        # RECAPTURA DEL DOM DESPUÉS DEL LAZY-LOADING
+        # ------------------------------------------------------------
+        html = ""
+        try:
+            if page is not None:
+                html = page.content()
+        except Exception:
+            html = response.html or response.text or ""
+
+        if not html:
+            html = response.html or response.text or ""
+
         soup = BeautifulSoup(html, "html.parser")
 
         data: Dict[str, Any] = {}
@@ -77,18 +129,26 @@ class WikiExtractor(SiteExtractorBase):
             data["content"] = content_el.get_text(" ", strip=True)
 
         # ------------------------------------------------------------
-        # INTERNAL LINKS
+        # INTERNAL LINKS (ULTRA DEEP MODE v2)
         # ------------------------------------------------------------
-        for a in soup.select("a[href^='/wiki/']"):
+        for a in soup.find_all("a"):
             href = a.get("href")
             if not href:
                 continue
 
+            # Skip Special:
             if href.startswith("/wiki/Special:"):
                 continue
 
-            full = "https://en.wikipedia.org" + href
-            links.append(full)
+            # Accept /wiki/...
+            if href.startswith("/wiki/"):
+                links.append("https://en.wikipedia.org" + href)
+                continue
+
+            # Accept /w/index.php?title=...
+            if href.startswith("/w/index.php"):
+                links.append("https://en.wikipedia.org" + href)
+                continue
 
         # ------------------------------------------------------------
         # RESULT
@@ -97,5 +157,5 @@ class WikiExtractor(SiteExtractorBase):
             "data": data,
             "media": media,
             "links": links,
-            "next_pages": links[:20],
+            "next_pages": links[:100],
         }

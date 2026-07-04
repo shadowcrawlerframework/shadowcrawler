@@ -1,21 +1,21 @@
 # shadowcrawler/core/browser_manager.py
-# ShadowCrawler v4.1.1 — Browser Manager
+# ShadowCrawler v4.1.3 — Browser Manager (FINAL)
 #
-# ShadowCrawler — Copyright © 2024–2030 Allan Mancera
-# Licensed under the Business Source License 1.1 (BUSL‑1.1).
-
-"""
-BrowserManager for ShadowCrawler v4.1.1.
-
-Responsibilities:
-    - Provide HTML‑only Playwright contexts for crawling (resource‑blocked).
-    - Provide FULL Playwright contexts for downloading (media-enabled).
-    - Inject stealth JS to reduce bot detection.
-    - Load global headers/cookies.
-    - Load auth handler sessions when available.
-    - Reuse contexts per domain for efficiency.
-    - Support storage_state‑based session restoration.
-"""
+# Compatible with:
+# - UniversalImageSpider (browser_mode)
+# - AuthBrowserDemo (FULL context)
+# - show_browser=True without warnings
+# - Current Engine/run.py
+#
+# Notes:
+#   - Manages Playwright browser contexts, pages, and sessions.
+#   - Provides DOM‑FULL and HTML‑only modes for spiders.
+#   - Responsible for lifecycle: create → reuse → close pages/contexts.
+#   - Does NOT perform crawling logic; spiders and Engine decide navigation.
+#   - Does NOT extract data; extractors handle HTML/JSON/media.
+#   - Must preserve browser_page when keep_page=True (DOM‑FULL spiders).
+#   - Fully compatible with AuthHandlers (login, session persistence).
+#   - Safe for checkpointing; no non‑serializable state is stored here.
 
 import os
 from urllib.parse import urlparse
@@ -25,9 +25,6 @@ from playwright.async_api import async_playwright
 from shadowcrawler.logging import get_logger
 
 
-# ------------------------------------------------------------
-# Stealth Script (anti‑bot fingerprint smoothing)
-# ------------------------------------------------------------
 STEALTH_JS = """
 Object.defineProperty(navigator, 'webdriver', { get: () => false });
 Object.defineProperty(navigator, 'plugins', { get: () => [1,2,3] });
@@ -60,12 +57,22 @@ Object.defineProperty(navigator, 'platform', { get: () => 'Win32' });
 """
 
 
-# ------------------------------------------------------------
-# BrowserManager
-# ------------------------------------------------------------
 class BrowserManager:
-    """Playwright browser lifecycle and context manager for ShadowCrawler."""
+    """
+    Browser Manager for ShadowCrawler v4.1.3.
 
+    This manager provides Playwright contexts for spiders that require DOM access
+    or HTML‑only crawling, including FULL contexts for authentication flows.
+
+    Responsibilities:
+        - Create and reuse browser contexts per domain.
+        - Provide HTML‑only or FULL contexts depending on spider mode.
+        - Inject stealth scripts to avoid automation detection.
+        - Load sessions and cookies for AuthHandlers.
+        - Block heavy resources in HTML‑only mode.
+        - Manage page lifecycle and safe browser shutdown.
+    """
+    
     def __init__(
         self,
         headless: bool = True,
@@ -74,6 +81,8 @@ class BrowserManager:
         proxy: Optional[Dict[str, Any]] = None,
         show_browser: bool = False,
     ) -> None:
+
+        self.show_browser = show_browser
         self.headless = not show_browser
 
         self.global_headers = global_headers or {}
@@ -83,8 +92,11 @@ class BrowserManager:
         self.play = None
         self.browser = None
 
-        self.html_contexts: Dict[str, Any] = {}      # Per-domain HTML-only contexts
-        self.service_context: Optional[Any] = None   # FULL context for downloader
+        # Contexts reused per domain
+        self.html_contexts: Dict[str, Any] = {}
+
+        # Service context (used for login flows)
+        self.service_context: Optional[Any] = None
 
         self.logger = get_logger("browser")
 
@@ -116,10 +128,11 @@ class BrowserManager:
     async def _create_context(
         self,
         html_only: bool,
-        domain: Optional[str] = None,
-        auth_handler: Optional[Any] = None,
+        domain: Optional[str],
+        auth_handler: Optional[Any],
     ) -> Any:
-        """Create a new Playwright context."""
+        """Create a new browser context with stealth and optional auth."""
+
         storage_state = None
         if auth_handler and hasattr(auth_handler, "storage_path"):
             if os.path.exists(auth_handler.storage_path):
@@ -139,11 +152,9 @@ class BrowserManager:
 
         await ctx.add_init_script(STEALTH_JS)
 
-        # Global headers
         if self.global_headers:
             await ctx.set_extra_http_headers(self.global_headers)
 
-        # Global cookies
         if self.global_cookies and domain:
             cookies = [
                 {"name": k, "value": v, "domain": domain, "path": "/"}
@@ -154,14 +165,13 @@ class BrowserManager:
             except Exception:
                 pass
 
-        # Auth handler session loading
         if auth_handler:
             try:
                 await auth_handler.load_session(ctx)
             except Exception as exc:
                 self.logger.error(f"Auth load failed: {exc}")
 
-        # Resource blocking for HTML‑only mode
+        # Block heavy resources in HTML-only mode
         if html_only:
             async def block(route, req):
                 if req.resource_type in ["image", "media", "video", "audio", "font", "stylesheet"]:
@@ -172,39 +182,49 @@ class BrowserManager:
         return ctx
 
     # ------------------------------------------------------------
-    async def get_page(self, url: str, auth_handler: Optional[Any] = None) -> Any:
-        """Return a new page from a per-domain HTML‑only context."""
+    async def get_page(
+        self,
+        url: str,
+        auth_handler: Optional[Any] = None,
+        browser_mode: str = "html",
+    ) -> Any:
+        """Return a new page from a reused context (per domain)."""
+
         domain = urlparse(url).netloc
+
+        # FULL context if an AuthHandler is present
+        if auth_handler is not None:
+            html_only = False
+        else:
+            html_only = (browser_mode == "html")
+
+        # Reuse contexts per domain
         if domain not in self.html_contexts:
             self.html_contexts[domain] = await self._create_context(
-                html_only=(auth_handler is None),
+                html_only=html_only,
                 domain=domain,
                 auth_handler=auth_handler,
             )
+
         return await self.html_contexts[domain].new_page()
 
     # ------------------------------------------------------------
     async def get_service_context(self, auth_handler: Optional[Any] = None) -> Any:
-        """Return a FULL context for downloading (media-enabled)."""
+        """Return a dedicated context for login flows or service operations."""
+
         if self.service_context:
             return self.service_context
 
-        # Determine domain for FULL context
         domain = None
 
-        # 1) If auth handler defines a domain, use it
         if auth_handler and hasattr(auth_handler, "domain"):
             domain = auth_handler.domain
 
-        # 2) If HTML contexts exist, use their domain (real spider domain)
         if not domain and self.html_contexts:
             domain = next(iter(self.html_contexts.keys()))
 
-        # 3) Fallback to safe placeholder
         if not domain:
             domain = "unknown"
-
-        self.logger.info(f"Creating FULL service context for domain: {domain}")
 
         ctx = await self._create_context(
             html_only=False,
@@ -217,27 +237,36 @@ class BrowserManager:
 
     # ------------------------------------------------------------
     async def close(self) -> None:
-        """Close all contexts and the browser cleanly."""
+        """
+        Always close Playwright to avoid open pipes.
+        Close Chromium only when show_browser=False.
+        """
+
         self.logger.info("Closing Playwright browser")
 
+        # Close all domain contexts
         for ctx in self.html_contexts.values():
             try:
                 await ctx.close()
             except Exception:
                 pass
 
+        # Close service context
         if self.service_context:
             try:
                 await self.service_context.close()
             except Exception:
                 pass
 
-        if self.browser:
-            try:
-                await self.browser.close()
-            except Exception:
-                pass
+        # Close Chromium ONLY if the browser window is not shown
+        if not self.show_browser:
+            if self.browser:
+                try:
+                    await self.browser.close()
+                except Exception:
+                    pass
 
+        # ALWAYS stop Playwright (prevents warnings)
         if self.play:
             try:
                 await self.play.stop()

@@ -1,10 +1,20 @@
 # shadowcrawler/site_extractors/quotes/QuotesExtractor.py
-# ShadowCrawler v4.1.1 — Quotes to Scrape Extractor
+# ShadowCrawler v4.1.3 — Quotes to Scrape Extractor
 #
-# ShadowCrawler © 2024–2030 Allan Mancera
-# Licensed under the Business Source License 1.1 (BUSL‑1.1).
+# DISCLAIMER:
+# This extractor is provided **for demonstration and educational purposes only**.
+# It shows how ShadowCrawler parses static HTML pages from “Quotes to Scrape”
+# using BeautifulSoup, extracting quotes, authors, tags, pagination, and tag links.
 #
-# Official ShadowCrawler v4 example extractor for Quotes to Scrape.
+# This example is intentionally simple and NOT intended for production use.
+# Real-world extractors require robust, site-specific parsing logic.
+#
+# Demonstrates:
+# - Static HTML parsing
+# - Quote, author, and tag extraction
+# - Pagination via “Next”
+# - Tag-based navigation
+# - Clean separation between spider and extractor
 
 from typing import Any, Dict, List, Optional
 
@@ -13,11 +23,16 @@ from shadowcrawler.site_extractors.base import SiteExtractorBase
 
 
 class QuotesExtractor(SiteExtractorBase):
-    """Example extractor for Quotes to Scrape.
+    """
+    QuotesExtractor — example extractor for QuotesToScrape.com.
+
+    This extractor demonstrates how ShadowCrawler parses static HTML pages
+    using BeautifulSoup. It extracts quotes, authors, tags, pagination links,
+    and tag-based navigation, returning a normalized extraction dict.
 
     Responsibilities:
         - Extract quotes, authors, and tags.
-        - Extract pagination (next page).
+        - Extract pagination (“Next” link).
         - Extract tag links.
         - Return a normalized extraction dict.
 

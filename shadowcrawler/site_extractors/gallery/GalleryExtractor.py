@@ -1,67 +1,138 @@
 # shadowcrawler/site_extractors/gallery/GalleryExtractor.py
-# ShadowCrawler v4.1.1 — Gallery Extractor (Unsplash Example)
+# ShadowCrawler v4.1.3 — Gallery Extractor (Unsplash Example)
 #
-# ShadowCrawler © 2024–2030 Allan Mancera
-# Licensed under the Business Source License 1.1 (BUSL‑1.1).
+# DISCLAIMER:
+# This extractor is provided **for demonstration and educational purposes only**.
+# It shows how ShadowCrawler parses image-heavy gallery pages using BeautifulSoup,
+# extracting multiple image formats (src, srcset, lazy-loaded, <picture>/<source>,
+# CSS background-image) and discovering category/photo links.
 #
-# Official ShadowCrawler v4 example extractor for image galleries (Unsplash).
+# This example is intentionally simple and NOT intended for production use.
+# Real-world gallery extractors require robust, site-specific parsing logic.
+#
+# Demonstrates:
+# - Static HTML parsing (no Playwright dependency)
+# - Extraction of multiple image formats
+# - Category and photo link discovery
+# - Infinite-scroll pagination simulation
 
 from typing import Any, Dict, List, Optional
+import re
 
 from bs4 import BeautifulSoup
 from shadowcrawler.site_extractors.base import SiteExtractorBase
 
 
 class GalleryExtractor(SiteExtractorBase):
-    """Example extractor for image galleries (Unsplash).
+    """
+    GalleryExtractor — enhanced extractor for Unsplash-style image galleries.
 
-    Responsibilities:
-        - Extract images from <img srcset>.
-        - Extract category links (/t/...).
-        - Extract photo links (/photos/...).
-        - Simulate pagination for infinite-scroll pages.
-        - Return a normalized extraction dict.
+    This extractor demonstrates how ShadowCrawler handles image-heavy sites
+    using static HTML parsing. It supports multiple image formats, including
+    <img srcset>, lazy-loaded attributes, <picture>/<source> tags, and CSS
+    background-image URLs. It also discovers category/photo links and simulates
+    pagination for infinite-scroll layouts.
+
+    Improvements:
+        - Extract <img srcset>, <img src>, lazy-loaded images.
+        - Extract <picture> and <source> images.
+        - Extract CSS background-image URLs.
+        - Extract category and photo links.
+        - Simulate pagination.
 
     Notes:
-        - Contains NO crawling logic.
-        - Does NOT create Request objects.
-        - Does NOT decide what to follow — that is the spider’s job.
+        - Fully synchronous (compatible with ShadowCrawler).
+        - Does NOT depend on Playwright DOM.
+        - Works with static HTML or page.content() DOM.
     """
 
     def __init__(self, handle: Optional[str] = None) -> None:
         super().__init__(handle)
 
-    # ------------------------------------------------------------
-    # EXTRACT
-    # ------------------------------------------------------------
     def extract(
         self,
         response: Any,
         url: Optional[str] = None,
         scope: Optional[Any] = None,
+        browser_page: Optional[Any] = None,
     ) -> Dict[str, Any]:
-        print("🖼️ GalleryExtractor ejecutado en:", url)
+
+        print("🖼️ GalleryExtractor running on:", url)
 
         html = response.html or ""
         soup = BeautifulSoup(html, "html.parser")
 
-        data: Dict[str, Any] = {}
         links: List[str] = []
         media: List[Dict[str, Any]] = []
 
         # ------------------------------------------------------------
-        # IMAGE EXTRACTION
+        # 1. IMG: srcset + src + lazy-loaded
         # ------------------------------------------------------------
-        for img in soup.select("img[srcset]"):
-            src = img.get("src")
-            if not src:
-                continue
+        for img in soup.find_all("img"):
+            candidates = [
+                img.get("src"),
+                img.get("srcset"),
+                img.get("data-src"),
+                img.get("data-lazy"),
+                img.get("data-lazy-src"),
+                img.get("data-original"),
+            ]
 
-            media.append({
-                "url": src,
-                "page": url,
-                "type": "image",
-            })
+            for c in candidates:
+                if not c:
+                    continue
+
+                # srcset → tomar la primera URL
+                if " " in c:
+                    c = c.split(" ")[0]
+
+                if c.startswith("http"):
+                    media.append({
+                        "url": c,
+                        "page": url,
+                        "type": "image",
+                    })
+
+        # ------------------------------------------------------------
+        # 2. <picture> / <source>
+        # ------------------------------------------------------------
+        for picture in soup.find_all("picture"):
+            for source in picture.find_all("source"):
+                srcset = source.get("srcset")
+                src = source.get("src")
+
+                candidates = [srcset, src]
+
+                for c in candidates:
+                    if not c:
+                        continue
+
+                    if " " in c:
+                        c = c.split(" ")[0]
+
+                    if c.startswith("http"):
+                        media.append({
+                            "url": c,
+                            "page": url,
+                            "type": "image",
+                        })
+
+        # ------------------------------------------------------------
+        # 3. CSS background-image
+        # ------------------------------------------------------------
+        bg_regex = re.compile(r'background-image:\s*url\(["\']?(.*?)["\']?\)', re.IGNORECASE)
+
+        for tag in soup.find_all(style=True):
+            style = tag.get("style", "")
+            match = bg_regex.search(style)
+            if match:
+                bg_url = match.group(1)
+                if bg_url.startswith("http"):
+                    media.append({
+                        "url": bg_url,
+                        "page": url,
+                        "type": "image",
+                    })
 
         # ------------------------------------------------------------
         # CATEGORY LINKS
@@ -80,13 +151,10 @@ class GalleryExtractor(SiteExtractorBase):
                 links.append("https://unsplash.com" + href)
 
         # ------------------------------------------------------------
-        # PAGINATION (Unsplash usa scroll infinito → simulamos next_pages)
+        # PAGINATION (simulate infinite scroll)
         # ------------------------------------------------------------
         next_pages = links[:10]
 
-        # ------------------------------------------------------------
-        # RESULT
-        # ------------------------------------------------------------
         return {
             "data": {"image_count": len(media)},
             "media": media,

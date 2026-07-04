@@ -1,5 +1,5 @@
 # tools/manual_login.py
-# ShadowCrawler v4.1.1 — Manual Login Utility
+# ShadowCrawler v4.1.3 — Manual Login Utility
 #
 # ShadowCrawler © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).
@@ -8,6 +8,15 @@
 # a real Playwright browser session. After login, the authenticated
 # storage state (cookies + local/session storage) is saved to disk so
 # spiders can reuse it for authenticated crawling.
+#
+# Notes:
+#   - Standalone utility; not part of the crawling engine.
+#   - Used to generate authenticated Playwright sessions manually.
+#   - Does NOT automate login; user performs all actions.
+#   - Produces a storage_state JSON file reusable by spiders and AuthHandlers.
+#   - Safe for debugging; does not modify engine or spider behavior.
+#   - Fully compatible with DOM‑FULL spiders and browser-based AuthHandlers.
+
 
 """
 ShadowCrawler Manual Login Tool (SC v4)

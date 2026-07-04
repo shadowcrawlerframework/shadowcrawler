@@ -1,5 +1,5 @@
 # shadowcrawler/core/media.py
-# ShadowCrawler v4.1.1 — Media Transport Entity
+# ShadowCrawler v4.1.3 — Media Transport Entity
 #
 # ShadowCrawler © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).
@@ -13,7 +13,7 @@ from typing import Optional, Dict, Any
 
 @dataclass
 class MediaItem:
-    """Lightweight media transport entity for ShadowCrawler v4.1.1.
+    """Lightweight media transport entity for ShadowCrawler v4.1.3.
 
     Represents a downloadable media resource detected by a SiteExtractor.
     This object is passed through the pipeline between:

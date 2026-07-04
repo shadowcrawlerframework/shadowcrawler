@@ -1,5 +1,5 @@
 # shadowcrawler/cli/main.py
-# ShadowCrawler v4.1.1 — Main CLI Router
+# ShadowCrawler v4.1.3 — Main CLI Router
 #
 # ShadowCrawler — Copyright © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).

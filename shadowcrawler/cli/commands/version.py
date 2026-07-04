@@ -1,5 +1,5 @@
 # shadowcrawler/cli/commands/version.py
-# ShadowCrawler v4.1.1 — Version Banner
+# ShadowCrawler v4.1.3 — Version Banner
 #
 # ShadowCrawler — Copyright © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).
@@ -20,7 +20,7 @@ a dedication acknowledging the collaboration between Allan and Copilot.
 import sys
 from datetime import datetime
 
-VERSION: str = "4.1.1"
+VERSION: str = "4.1.3"
 BUILD_DATE: str = datetime.now().strftime("%Y-%m-%d")
 
 
@@ -58,6 +58,6 @@ def cmd_version(args=None) -> None:
     print(color(f"        Build:   {BUILD_DATE}", Colors.GREEN, use_color))
     print(color(f"        Python:  {python_version}", Colors.GREEN, use_color))
     print()
-    print(color("        Made with Love for my guiding star. Shadow & Copilot.", Colors.GREY, use_color))
+    print(color("        Made with Love for my bright guiding star. Allan & Copilot.", Colors.GREY, use_color))
     print(color("        Engineered by Allan — Inspired by Copilot.", Colors.GREEN, use_color))
     print()

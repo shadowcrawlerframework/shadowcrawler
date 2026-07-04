@@ -1,5 +1,5 @@
 # shadowcrawler/models/response.py
-# ShadowCrawler v4.1.1 — Response Model
+# ShadowCrawler v4.1.3 — Response Model
 #
 # ShadowCrawler © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).
@@ -19,7 +19,7 @@ import json
 
 @dataclass
 class Response:
-    """Normalized fetch result for ShadowCrawler v4.1.1.
+    """Normalized fetch result for ShadowCrawler v4.1.3.
 
     Represents a unified response object consumed by:
         - RequestsFetcher

@@ -1,5 +1,5 @@
 # shadowcrawler/cli/commands/download.py
-# ShadowCrawler v4.1.1 — Download Media from Checkpoint
+# ShadowCrawler v4.1.3 — Download Media from Checkpoint
 #
 # ShadowCrawler — Copyright © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).

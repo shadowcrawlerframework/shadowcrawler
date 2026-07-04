@@ -1,20 +1,18 @@
 # shadowcrawler/cli/commands/spiders_create.py
-# ShadowCrawler v4.1.1 — Spider Generator (SC v4 Standard Edition)
+# ShadowCrawler v4.1.3 — Spider Generator (Full‑Browser Default Edition)
 #
 # ShadowCrawler — Copyright © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).
 
 """
-CLI command for generating new spider skeletons.
+CLI command for generating new spider skeletons (SC v4.1.3).
 
 Features:
+    - Full‑browser spiders by default (Playwright visible + persistent page).
+    - Supports --full-browser / --browser / --http.
     - Creates spider, extractor, and optional auth handler.
+    - SC v4.1.3‑standard templates (async parse, extractor persistente).
     - Supports public and private spiders.
-    - Ensures directory structure and __init__.py files.
-    - Provides SC v4‑standard templates.
-    - Supports --browser / --http / --with-auth / --with-extractor / --pagination.
-
-This generator is intentionally simple and produces editable templates.
 """
 
 import os
@@ -27,8 +25,6 @@ from typing import Any
 # ANSI Colors
 # ------------------------------------------------------------
 class Colors:
-    """ANSI color escape codes for CLI output."""
-
     BLUE = "\033[94m"
     GREEN = "\033[92m"
     YELLOW = "\033[93m"
@@ -38,7 +34,6 @@ class Colors:
 
 
 def color(text: str, c: str, enabled: bool = True) -> str:
-    """Apply ANSI color to text if enabled."""
     return f"{c}{text}{Colors.RESET}" if enabled else text
 
 
@@ -46,12 +41,10 @@ def color(text: str, c: str, enabled: bool = True) -> str:
 # Helpers
 # ------------------------------------------------------------
 def ensure_dir(path: str) -> None:
-    """Create directory if it does not exist."""
     os.makedirs(path, exist_ok=True)
 
 
 def ensure_init(path: str) -> None:
-    """Ensure __init__.py exists inside a folder."""
     init_path = os.path.join(path, "__init__.py")
     if not os.path.exists(init_path):
         with open(init_path, "w", encoding="utf-8") as f:
@@ -59,7 +52,6 @@ def ensure_init(path: str) -> None:
 
 
 def write_file(path: str, content: str, force: bool = False) -> None:
-    """Write a file to disk, respecting overwrite rules."""
     if os.path.exists(path) and not force:
         raise FileExistsError(f"File exists: {path}")
     with open(path, "w", encoding="utf-8") as f:
@@ -67,17 +59,20 @@ def write_file(path: str, content: str, force: bool = False) -> None:
 
 
 def sanitize_name(name: str) -> str:
-    """Convert a human-readable name into a safe class/module identifier."""
     return re.sub(r"[^A-Za-z0-9]", "", name)
 
 
 # ------------------------------------------------------------
-# Templates
+# Templates (SC v4.1.3 Full‑Browser Default)
 # ------------------------------------------------------------
 SPIDER_TEMPLATE = """\
-\"\"\"Auto-generated SC v4 spider for {domain}.\"\"\"
+\"\"\"Auto-generated SC v4.1.3 spider for {domain}.\"\"\"
+
+import asyncio
+from typing import Any, Dict
 
 from shadowcrawler.core.spider_base import SpiderBase
+from shadowcrawler.models.response import Response
 from shadowcrawler.site_extractors{extractor_prefix}.{extractor_module} import {extractor_class}
 {auth_import}
 
@@ -89,76 +84,81 @@ class {class_name}(SpiderBase):
     name = "{spider_name}"
     handle = "{handle}"
     domain = "{domain}"
-    fetch_mode = "{fetch_mode}"
 
-    # Default worker count for this spider.
-    # Users can override via CLI: --workers N
-    workers = 2
+    # Full-browser default (Playwright visible + persistent page)
+    fetch_mode = "{fetch_mode}"
+    workers = {workers}
 
     extractor_class = {extractor_class}
     auth_handler_class = {auth_class}
 
     # ------------------------------------------------------------
+    # INIT (extractor persistente)
+    # ------------------------------------------------------------
+    def __init__(self):
+        super().__init__()
+        self.extractor = self.extractor_class(self.handle)
+
+    # ------------------------------------------------------------
     # CLASSIFICATION
     # ------------------------------------------------------------
-    def classify(self, url: str):
-        if not url:
-            return "NOFOLLOW"
-        u = url.lower()
+    def classify(self, url: str) -> str:
         return "GENERIC"
 
-    def should_follow(self, type_: str):
-        return type_ != "NOFOLLOW"
+    def should_follow(self, type_: str) -> bool:
+        return False
 
     # ------------------------------------------------------------
     # FETCH MODE DECISION
     # ------------------------------------------------------------
-    def use_browser(self, url: str, type_: str):
+    def use_browser(self, url: str, type_: str) -> bool:
         return {use_browser}
 
-    def request_meta(self, url: str, type_: str):
-        return {{"use_browser": {use_browser}}}
+    def request_meta(self, url: str, type_: str) -> Dict[str, Any]:
+        return {request_meta}
 
     # ------------------------------------------------------------
-    # PARSER
+    # PARSER (async, full-browser compatible)
     # ------------------------------------------------------------
-    def parse(self, page, url, **kwargs):
-        response = page
-        if response is None or not getattr(response, "html", None):
-            return {{"links": [], "next_pages": [], "media": [], "data": {{}}}}
+    async def parse(self, response: Response, **kwargs) -> Dict[str, Any]:
+        page = getattr(response, "browser_page", None)
 
-        extractor = self.extractor_class(self.handle)
-        result = extractor.extract(response, url, scope=self.classify(url))
+        if page is None:
+            return {"links": [], "next_pages": [], "media": [], "data": {}}
 
-        return {{
+        result = await self.extractor.extract_from_page(page, response.url)
+
+        return {
             "links": result.get("links", []),
             "next_pages": result.get("next_pages", []),
             "media": result.get("media", []),
-            "data": result.get("data", {{}}),
-        }}
+            "data": result.get("data", {}),
+        }
 """
 
 
 EXTRACTOR_TEMPLATE = """\
-\"\"\"Auto-generated SC v4 extractor for {domain}.\"\"\"
+\"\"\"Auto-generated SC v4.1.3 extractor for {domain}.\"\"\"
 
 from shadowcrawler.site_extractors.base import SiteExtractorBase
-from bs4 import BeautifulSoup
 
 
 class {class_name}(SiteExtractorBase):
-    pass
+    async def extract_from_page(self, page, url: str):
+        # TODO: Implement DOM extraction
+        return {"links": [], "next_pages": [], "media": [], "data": {}}
 """
 
 
 AUTH_TEMPLATE = """\
-\"\"\"Auto-generated SC v4 Auth Handler for {domain}.\"\"\"
+\"\"\"Auto-generated SC v4.1.3 Auth Handler for {domain}.\"\"\"
 
 from shadowcrawler.auth.base import AuthHandlerBase
 
 
 class {class_name}(AuthHandlerBase):
-    def login(self, browser):
+    async def login(self, browser):
+        # TODO: Implement login logic
         return browser
 """
 
@@ -167,7 +167,6 @@ class {class_name}(AuthHandlerBase):
 # CLI Entry Point
 # ------------------------------------------------------------
 def cmd_spiders_create(args: Any) -> None:
-    """Entry point for the `shadowcrawler spiders-create` command."""
     use_color = sys.stdout.isatty()
 
     # --------------------------------------------------------
@@ -215,7 +214,57 @@ def cmd_spiders_create(args: Any) -> None:
     auth_path = os.path.join(auth_dir, f"{auth_class}.py")
 
     # --------------------------------------------------------
-    # 3. Prepare template values
+    # 3. Determine fetch_mode (full-browser default)
+    # --------------------------------------------------------
+    if args.full_browser:
+        fetch_mode = "full-browser"
+        use_browser = True
+        workers = 1
+        request_meta = {
+            "use_browser": True,
+            "browser_mode": "full",
+            "keep_page": True,
+            "wait_time": 20000,
+            "stealth": True,
+            "javaScriptEnabled": True,
+            "bypassCSP": True,
+            "imagesEnabled": True,
+            "webgl": True,
+            "serviceWorkers": "allow",
+        }
+
+    elif args.browser:
+        fetch_mode = "browser"
+        use_browser = True
+        workers = 1
+        request_meta = {"use_browser": True, "browser_mode": "simple"}
+
+    elif args.http:
+        fetch_mode = "http"
+        use_browser = False
+        workers = 2
+        request_meta = {"use_browser": False}
+
+    else:
+        # DEFAULT → FULL-BROWSER
+        fetch_mode = "full-browser"
+        use_browser = True
+        workers = 1
+        request_meta = {
+            "use_browser": True,
+            "browser_mode": "full",
+            "keep_page": True,
+            "wait_time": 20000,
+            "stealth": True,
+            "javaScriptEnabled": True,
+            "bypassCSP": True,
+            "imagesEnabled": True,
+            "webgl": True,
+            "serviceWorkers": "allow",
+        }
+
+    # --------------------------------------------------------
+    # 4. Prepare template values
     # --------------------------------------------------------
     extractor_prefix = "" if not args.private else "._private"
     auth_import = (
@@ -229,11 +278,13 @@ def cmd_spiders_create(args: Any) -> None:
         spider_name=raw_name,
         class_name=spider_class,
         handle=safe_name.lower(),
-        fetch_mode="browser" if args.browser else "http",
+        fetch_mode=fetch_mode,
+        workers=workers,
         extractor_prefix=extractor_prefix,
         extractor_module=extractor_folder + "." + extractor_class,
         extractor_class=extractor_class,
-        use_browser="True" if args.browser else "False",
+        use_browser="True" if use_browser else "False",
+        request_meta=request_meta,
         auth_import=auth_import,
         auth_class=auth_class_value,
     )
@@ -249,7 +300,7 @@ def cmd_spiders_create(args: Any) -> None:
     )
 
     # --------------------------------------------------------
-    # 4. Write files
+    # 5. Write files
     # --------------------------------------------------------
     try:
         write_file(spider_path, spider_code, force=args.force)
@@ -266,30 +317,17 @@ def cmd_spiders_create(args: Any) -> None:
     except FileExistsError as exc:
         print(color(str(exc), Colors.RED, use_color))
         print(color("\nA spider with this name already exists.", Colors.YELLOW, use_color))
-        print("Options:")
-        print(f"  • Use a different name, for example:")
-        print(f"       shadowcrawler spiders-create {raw_name}V2 --with-extractor")
-        print("  • Or overwrite the existing files with --force:")
-        print(f"       shadowcrawler spiders-create {raw_name} --with-extractor --force")
         sys.exit(1)
 
     # --------------------------------------------------------
-    # 5. Final UX messages
+    # 6. Final UX messages
     # --------------------------------------------------------
     print(color("\nYour spider template is ready!", Colors.GREEN, use_color))
-
     print(color("\nNext steps:", Colors.YELLOW, use_color))
-    print("  1. Edit your spider:")
-    print(f"       - {spider_path}")
-    print("       - Implement classify() and parse()")
-
-    if args.with_extractor:
-        print("  2. Edit your extractor:")
-        print(f"       - {extractor_path}")
-
+    print(f"  - Edit your spider: {spider_path}")
+    print(f"  - Edit your extractor: {extractor_path}")
     if args.with_auth:
-        print("  3. Edit your auth handler:")
-        print(f"       - {auth_path}")
+        print(f"  - Edit your auth handler: {auth_path}")
 
     print(color("\nRun your spider with:", Colors.YELLOW, use_color))
     print(color(f"  shadowcrawler run --spider {spider_class} --url https://example.com\n", Colors.GREEN, use_color))

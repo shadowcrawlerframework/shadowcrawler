@@ -1,10 +1,20 @@
 # shadowcrawler/spiders/wiki/WikiSpider.py
-# ShadowCrawler v4.1.1 — Wikipedia Spider (Official Example)
+# ShadowCrawler v4.1.3 — Wikipedia Spider (Official Example)
 #
-# ShadowCrawler © 2024–2030 Allan Mancera
-# Licensed under the Business Source License 1.1 (BUSL‑1.1).
+# DISCLAIMER:
+# This spider is provided **for demonstration and educational purposes only**.
+# It shows how ShadowCrawler performs browser-based extraction on large,
+# structured sites such as Wikipedia, using Playwright to render dynamic
+# content and a classification model for ARTICLE / CATEGORY / FILE / GENERIC.
 #
-# Official ShadowCrawler v4 example spider for Wikipedia.
+# This example is intentionally simple and NOT intended for production use.
+# Real-world Wikipedia spiders require robust, site-specific logic.
+#
+# Demonstrates:
+# - Browser-based DOM extraction
+# - Infobox parsing
+# - Internal link discovery
+# - Clean separation between spider and extractor
 
 from typing import Any, Dict
 
@@ -13,7 +23,12 @@ from shadowcrawler.site_extractors.wiki.WikiExtractor import WikiExtractor
 
 
 class WikiSpider(SpiderBase):
-    """Spider for Wikipedia pages.
+    """
+    WikiSpider — browser-based demo for Wikipedia.
+
+    This spider demonstrates how ShadowCrawler handles large structured sites
+    using Playwright. It classifies URLs into ARTICLE, CATEGORY, FILE, and
+    GENERIC, excludes Special: pages, and delegates extraction to WikiExtractor.
 
     Responsibilities:
         - Always use browser mode (Playwright).
@@ -23,20 +38,21 @@ class WikiSpider(SpiderBase):
         - Make NO crawling decisions beyond classification.
 
     Notes:
-        This spider demonstrates how ShadowCrawler handles:
+        This spider demonstrates:
             - Large structured sites
             - Infobox extraction
             - Internal link discovery
     """
 
     # ------------------------------------------------------------
-    # METADATA
+    # METADATA (contract-level signals)
     # ------------------------------------------------------------
     name = "Wiki"
     handle = "wiki"
     domain = "wikipedia.org"
-    fetch_mode = "browser"
-    workers = 2
+
+    fetch_mode = "browser"   # Force Playwright mode
+    workers = 2              # Multiple workers OK for browser mode
 
     extractor_class = WikiExtractor
     auth_handler_class = None
@@ -45,6 +61,15 @@ class WikiSpider(SpiderBase):
     # CLASSIFICATION
     # ------------------------------------------------------------
     def classify(self, url: str) -> str:
+        """
+        Classify URLs into logical scopes.
+
+        /wiki/Special: → NOFOLLOW
+        /wiki/Category: → CATEGORY
+        /wiki/File:     → FILE
+        /wiki/...       → ARTICLE
+        otherwise        → GENERIC
+        """
         if not url:
             return "NOFOLLOW"
 
@@ -68,33 +93,38 @@ class WikiSpider(SpiderBase):
     # FOLLOW RULES
     # ------------------------------------------------------------
     def should_follow(self, type_: str) -> bool:
+        """Follow everything except NOFOLLOW."""
         return type_ != "NOFOLLOW"
 
     # ------------------------------------------------------------
     # ALWAYS USE BROWSER
     # ------------------------------------------------------------
     def use_browser(self, url: str, type_: str) -> bool:
+        """Force Playwright browser mode."""
         return True
 
     def request_meta(self, url: str, type_: str) -> Dict[str, Any]:
+        """Browser metadata for PlaywrightFetcher."""
         return {"use_browser": True}
 
     # ------------------------------------------------------------
-    # PARSE
+    # PARSE (browser-based)
     # ------------------------------------------------------------
     def parse(self, page: Any, url: str, **kwargs) -> Dict[str, Any]:
-        response = page
-
-        # If Playwright failed or returned no HTML
-        if response is None or not getattr(response, "html", None):
+        response = getattr(page, "response_obj", page)
+    
+        # Accept .html or .text (PlaywrightFetcher uses .html)
+        html = getattr(response, "html", None) or getattr(response, "text", None)
+        if response is None or not html:
             return {"links": [], "next_pages": [], "media": [], "data": {}}
-
+    
         extractor = self.extractor_class(self.handle)
         result = extractor.extract(response, url, scope=self.classify(url))
-
+    
         return {
             "links": result.get("links", []),
             "next_pages": result.get("next_pages", []),
             "media": result.get("media", []),
             "data": result.get("data", {}),
         }
+    

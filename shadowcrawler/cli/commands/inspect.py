@@ -1,5 +1,5 @@
 # shadowcrawler/cli/commands/inspect.py
-# ShadowCrawler v4.1.1 — Spider Inspection Tool
+# ShadowCrawler v4.1.3 — Spider Inspection Tool
 #
 # ShadowCrawler — Copyright © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).

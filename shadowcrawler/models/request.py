@@ -1,5 +1,5 @@
 # shadowcrawler/models/request.py
-# ShadowCrawler v4.1.1 — Request Model
+# ShadowCrawler v4.1.3 — Request Model
 #
 # ShadowCrawler © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).
@@ -13,7 +13,7 @@ import time
 
 @dataclass
 class Request:
-    """Crawling request entity for ShadowCrawler v4.1.1.
+    """Crawling request entity for ShadowCrawler v4.1.3.
 
     Represents a normalized crawling request consumed by:
         - Frontier

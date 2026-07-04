@@ -5,11 +5,14 @@ include CHANGELOG.md
 recursive-include shadowcrawler *.py
 recursive-include shadowcrawler *.txt
 recursive-include shadowcrawler *.json
+recursive-include assets *.png
+recursive-include assets *.svg
 
-# Optional: include external assets (not recommended for PyPI)
+
+# Si quieres incluir assets externos (fuera del paquete)
 # include assets/*
 
-# Exclude cache and compiled files
+# Excluir basura
 exclude *.pyc
 exclude __pycache__/*
 exclude shadowcrawler/__pycache__/*

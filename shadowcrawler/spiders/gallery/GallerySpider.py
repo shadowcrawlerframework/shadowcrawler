@@ -1,19 +1,36 @@
 # shadowcrawler/spiders/gallery/GallerySpider.py
-# ShadowCrawler v4.1.1 — Gallery Spider (Unsplash Example)
+# ShadowCrawler v4.1.3 — Gallery Spider (Unsplash Example)
 #
-# ShadowCrawler © 2024–2030 Allan Mancera
-# Licensed under the Business Source License 1.1 (BUSL‑1.1).
+# DISCLAIMER:
+# This spider is provided **for demonstration and educational purposes only**.
+# It shows how ShadowCrawler performs browser-based extraction on
+# image-heavy gallery sites such as Unsplash, using Playwright to
+# render dynamic content, simulate infinite scroll, and discover
+# category/photo pages.
 #
-# Official ShadowCrawler v4 example spider for image galleries (Unsplash).
+# This example is intentionally simple and NOT intended for production use.
+# Real-world gallery spiders require robust, site-specific logic.
+#
+# Demonstrates:
+# - Browser-based DOM extraction
+# - Infinite-scroll simulation
+# - Category and photo discovery
+# - Clean separation between spider and extractor
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 
 from shadowcrawler.core.spider_base import SpiderBase
 from shadowcrawler.site_extractors.gallery.GalleryExtractor import GalleryExtractor
 
 
 class GallerySpider(SpiderBase):
-    """Spider for Unsplash-style image galleries.
+    """
+    GallerySpider — browser-based demo for Unsplash-style image galleries.
+
+    This spider demonstrates how ShadowCrawler handles image-heavy sites
+    using Playwright. It classifies pages into PHOTO, CATEGORY, and GENERIC,
+    delegates all extraction to GalleryExtractor, and avoids making crawling
+    decisions beyond simple classification.
 
     Responsibilities:
         - Always use browser mode (Playwright).
@@ -29,7 +46,7 @@ class GallerySpider(SpiderBase):
     """
 
     # ------------------------------------------------------------
-    # METADATA
+    # METADATA (contract-level signals)
     # ------------------------------------------------------------
     name = "Gallery"
     handle = "gallery"
@@ -70,20 +87,31 @@ class GallerySpider(SpiderBase):
         return True
 
     def request_meta(self, url: str, type_: str) -> Dict[str, Any]:
-        return {"use_browser": True}
+        # REQUIRED for DOM extraction in 4.1.3
+        return {
+            "use_browser": True,
+            "browser_mode": "html",
+            "keep_page": True,
+        }
 
     # ------------------------------------------------------------
-    # PARSE
+    # PARSE (MODERN SIGNATURE)
     # ------------------------------------------------------------
-    def parse(self, page: Any, url: str, **kwargs) -> Dict[str, Any]:
-        response = page
-
-        # If Playwright failed or returned no HTML
+    def parse(self, response: Any) -> Dict[str, Any]:
+        # Modern Response object from PlaywrightFetcher
         if response is None or not getattr(response, "html", None):
             return {"links": [], "next_pages": [], "media": [], "data": {}}
 
+        url = response.url
+        browser_page = getattr(response, "browser_page", None)
+
         extractor = self.extractor_class(self.handle)
-        result = extractor.extract(response, url, scope=self.classify(url))
+        result = extractor.extract(
+            response,
+            url,
+            scope=self.classify(url),
+            browser_page=browser_page,
+        )
 
         return {
             "links": result.get("links", []),

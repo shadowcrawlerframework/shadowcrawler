@@ -1,5 +1,5 @@
 # shadowcrawler/cli/commands/resume.py
-# ShadowCrawler v4.1.1 — Resume a Previous Crawl Session
+# ShadowCrawler v4.1.3 — Resume a Previous Crawl Session
 #
 # ShadowCrawler — Copyright © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).

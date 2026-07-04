@@ -1,10 +1,20 @@
 # shadowcrawler/site_extractors/json_extractor.py
-# ShadowCrawler v4.1.1 — JSON Extractor
+# ShadowCrawler v4.1.3 — JSON Extractor
 #
 # ShadowCrawler © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).
 #
 # Generic JSON response extractor for ShadowCrawler.
+#
+# Notes:
+#   - Converts response.text → JSON (dict or list).
+#   - Calls a spider-defined handler(data, response, scope).
+#   - Does NOT include crawling logic — classification, priority,
+#     browser usage, and follow rules belong to the spider.
+#   - Does NOT create Request objects — SpiderAdapter handles that.
+#   - Does NOT filter links or media — spiders decide what to follow.
+#   - Fully compatible with DOM‑FULL spiders (response.browser_page available).
+#   - Fully serializable and safe for checkpointing.
 
 import json
 from typing import Any, Dict, Optional
@@ -13,7 +23,7 @@ from shadowcrawler.site_extractors.base import SiteExtractorBase
 
 
 class JSONExtractor(SiteExtractorBase):
-    """Generic JSON extractor for ShadowCrawler v4.1.1.
+    """Generic JSON extractor for ShadowCrawler v4.1.3.
 
     The spider provides a handler with the signature:
 
@@ -33,6 +43,8 @@ class JSONExtractor(SiteExtractorBase):
         - Does NOT include site logic.
         - Does NOT include crawling logic.
         - Does NOT create Requests.
+        - Media normalization is handled later by MediaExtractor.
+        - Link normalization and Request creation are handled by SpiderAdapter.
     """
 
     def __init__(self, handler: Any) -> None:

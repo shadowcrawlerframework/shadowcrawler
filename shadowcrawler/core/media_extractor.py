@@ -1,10 +1,20 @@
 # shadowcrawler/core/media_extractor.py
-# ShadowCrawler v4.1.1 — Media Extractor
+# ShadowCrawler v4.1.3 — Media Extractor
 #
 # ShadowCrawler © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).
 #
 # Normalizes media and data. Does NOT modify Requests.
+#
+# Notes:
+#   - Normalizes media dictionaries produced by extractors.
+#   - Does NOT fetch media; Downloader handles actual downloads.
+#   - Does NOT classify URLs; spiders decide what is media.
+#   - Does NOT create Requests; SpiderAdapter handles link normalization.
+#   - Supports DOM‑FULL spiders (may inspect browser_page if provided).
+#   - Fully serializable; contains no crawling or browser state.
+#   - Media extraction is purely structural (URL, type, metadata).
+
 
 from typing import Dict, Any, List, Tuple
 
@@ -14,7 +24,7 @@ from shadowcrawler.logging import get_logger
 
 
 class MediaExtractor:
-    """Normalize media and structured data for ShadowCrawler v4.1.1.
+    """Normalize media and structured data for ShadowCrawler v4.1.3.
 
     Responsibilities:
         - Convert raw media entries into MediaItem objects.

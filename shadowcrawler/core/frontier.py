@@ -1,10 +1,20 @@
 # shadowcrawler/core/frontier.py
-# ShadowCrawler v4.1.1 — Frontier (Priority Queue + Dedupe)
+# ShadowCrawler v4.1.3 — Frontier (Priority Queue + Dedupe)
 #
 # ShadowCrawler © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).
 #
 # Priority queue with advanced dedupe and modern Request support.
+#
+# Notes:
+#   - Manages the crawling queue (FIFO/LIFO/priority).
+#   - Handles deduplication via fingerprints.
+#   - Does NOT fetch pages; fetchers handle HTTP/Browser.
+#   - Does NOT extract data; extractors handle HTML/JSON/media.
+#   - Does NOT classify URLs; spiders decide follow rules.
+#   - Fully serializable for checkpointing (queue + seen set).
+#   - Responsible for scheduling: push → pop → retry → depth tracking.
+
 
 from collections import defaultdict, deque
 from typing import Dict, Deque, List, Optional, Set
@@ -14,7 +24,7 @@ from shadowcrawler.logging import get_logger
 
 
 class Frontier:
-    """Priority-based request frontier with dedupe for ShadowCrawler v4.1.1.
+    """Priority-based request frontier with dedupe for ShadowCrawler v4.1.3.
 
     Responsibilities:
         - Deduplicate requests using fingerprint or URL.

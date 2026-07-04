@@ -1,10 +1,20 @@
 # shadowcrawler/site_extractors/base.py
-# ShadowCrawler v4.1.1 — Site Extractor Base Class
+# ShadowCrawler v4.1.3 — Site Extractor Base Class
 #
 # ShadowCrawler © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).
 #
 # Universal extractor contract for ShadowCrawler spiders.
+#
+# Notes:
+#   - Extractors operate ONLY on Response objects; they do NOT fetch pages.
+#   - Extractors contain NO crawling logic — classification, priority,
+#     browser usage, and follow rules belong to the spider.
+#   - Extractors MUST return a dict with keys: data, media, links, next_pages.
+#   - Extractors MUST NOT create Request objects — SpiderAdapter handles that.
+#   - Extractors MUST NOT filter links or media — spiders decide what to follow.
+#   - Fully compatible with DOM‑FULL spiders (response.browser_page available).
+#   - Fully serializable and safe for checkpointing.
 
 from urllib.parse import urljoin
 from typing import Any, Dict, Optional
@@ -14,12 +24,12 @@ from shadowcrawler.logging import get_logger
 
 
 class SiteExtractorBase:
-    """Base class for all ShadowCrawler site extractors (v4.1.1).
+    """Base class for all ShadowCrawler site extractors (v4.1.3).
 
     Responsibilities:
         - Receive a full Response object.
-        - Provide helpers for HTML, JSON, media, and links.
-        - Normalize URLs.
+        - Provide helpers for HTML parsing, JSON extraction, media creation,
+          and URL normalization.
         - Return a standard extraction dict:
 
             {
@@ -32,6 +42,8 @@ class SiteExtractorBase:
     Notes:
         - Concrete extractors MUST implement extract().
         - Extractors contain NO crawling logic — that belongs to the spider.
+        - Media normalization is handled later by MediaExtractor.
+        - Link normalization and Request creation are handled by SpiderAdapter.
     """
 
     def __init__(self, handle: Optional[str] = None) -> None:
@@ -41,7 +53,12 @@ class SiteExtractorBase:
     # ------------------------------------------------------------
     # EXTRACT (ABSTRACT)
     # ------------------------------------------------------------
-    def extract(self, response: Any, url: Optional[str] = None, scope: Optional[Any] = None) -> Dict[str, Any]:
+    def extract(
+        self,
+        response: Any,
+        url: Optional[str] = None,
+        scope: Optional[Any] = None
+    ) -> Dict[str, Any]:
         """Extract links, media, and data from a Response.
 
         Args:
@@ -86,7 +103,13 @@ class SiteExtractorBase:
     # ------------------------------------------------------------
     # MEDIA HELPER
     # ------------------------------------------------------------
-    def media(self, url: str, page: Optional[str] = None, media_type: str = "unknown", **kwargs) -> Dict[str, Any]:
+    def media(
+        self,
+        url: str,
+        page: Optional[str] = None,
+        media_type: str = "unknown",
+        **kwargs
+    ) -> Dict[str, Any]:
         """Helper to create media dictionaries."""
         return {
             "url": url,

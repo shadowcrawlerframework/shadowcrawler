@@ -1,5 +1,5 @@
 # shadowcrawler/core/spider_loader.py
-# ShadowCrawler v4.1.1 — Recursive Spider Loader
+# ShadowCrawler v4.1.3 — Recursive Spider Loader
 #
 # ShadowCrawler © 2024–2030 Allan Mancera
 # Licensed under the Business Source License 1.1 (BUSL‑1.1).

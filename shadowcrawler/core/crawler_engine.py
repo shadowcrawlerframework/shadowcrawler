@@ -1,8 +1,22 @@
 # shadowcrawler/core/crawler_engine.py
-# ShadowCrawler v4.1.1 — Asynchronous Crawling Engine
+# ShadowCrawler v4.1.3 — Asynchronous Crawling Engine
 #
 # ShadowCrawler — Copyright © 2024–2030 Allan Mancera
 # This software is licensed under the Business Source License 1.1 (BUSL‑1.1).
+#
+# Notes:
+#   - Orchestrates the full pipeline: fetch → parse → extract → schedule.
+#   - Delegates responsibilities:
+#       * Fetchers handle HTTP/Browser.
+#       * SpiderAdapter normalizes links/media/data.
+#       * Extractors parse HTML/JSON/media.
+#       * Frontier schedules Requests.
+#       * Downloader saves media.
+#   - Does NOT contain site logic; spiders define crawling behavior.
+#   - Fully compatible with DOM‑FULL spiders (browser_page preserved).
+#   - Safe for checkpointing; engine state is serializable.
+#   - Responsible for retries, error handling, and pipeline stability.
+
 
 """
 Asynchronous crawling engine for ShadowCrawler.
@@ -124,7 +138,7 @@ class CrawlerEngine:
         self.verbose: bool = verbose
 
         self.logger = get_logger("engine")
-        self.logger.info("Initializing ShadowCrawler Engine v4.1.1")
+        self.logger.info("Initializing ShadowCrawler Engine v4.1.3")
 
         # Base components
         self.frontier: Frontier = frontier

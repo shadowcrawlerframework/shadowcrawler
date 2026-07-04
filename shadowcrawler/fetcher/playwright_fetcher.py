@@ -1,13 +1,5 @@
 # shadowcrawler/fetcher/playwright_fetcher.py
-# ShadowCrawler v4.1.1 — Playwright Fetcher (HTML‑ONLY SAFE)
-#
-# ShadowCrawler © 2024–2030 Allan Mancera
-# Licensed under the Business Source License 1.1 (BUSL‑1.1).
-#
-# - Uses ONLY HTML‑only contexts
-# - Never touches the FULL downloader context
-# - Always closes pages safely
-# - Returns normalized Response objects
+# ShadowCrawler v4.1.3 — Playwright Fetcher (DOM‑FULL compatible)
 
 from typing import Any, Optional
 
@@ -17,25 +9,23 @@ from shadowcrawler.models.response import Response
 
 
 class PlaywrightFetcher:
-    """HTML‑only Playwright fetcher for ShadowCrawler v4.1.1.
+    """Playwright fetcher for ShadowCrawler v4.1.3.
+
+    This fetcher is used for spiders that require DOM access or HTML‑only crawling.
 
     Responsibilities:
-        - Fetch HTML using lightweight HTML‑only contexts.
-        - Never interact with the FULL download context.
-        - Always close pages safely unless an AuthHandler needs them.
-        - Return normalized Response objects compatible with the Engine.
-
-    Notes:
-        This fetcher is intentionally minimal and safe. It avoids
-        heavy browser contexts and ensures memory stability.
+        - Fetch HTML using Playwright contexts.
+        - Respect spider-defined browser_mode ("html" or "full").
+        - KEEP browser_page alive for DOM‑FULL spiders (UniversalImage).
+        - Close pages only when explicitly requested.
     """
 
     def __init__(self, browser_manager: Any) -> None:
         self.browser_manager = browser_manager
         self.logger = get_logger("browser")
-
+        
     # ------------------------------------------------------------
-    # FETCH
+    # FETCH (DOM-FULL + JS-DYNAMIC compatible)
     # ------------------------------------------------------------
     async def fetch(
         self,
@@ -43,36 +33,34 @@ class PlaywrightFetcher:
         meta: Optional[dict] = None,
         auth_handler: Optional[Any] = None,
     ) -> Response:
-        """Fetch a URL using Playwright in HTML‑only mode.
-
-        Args:
-            url: Target URL.
-            meta: Optional metadata dict (use_browser, wait_for, wait_time).
-            auth_handler: Optional authentication handler.
-
-        Returns:
-            A normalized Response object.
-        """
         meta = meta or {}
 
         use_browser = meta.get("use_browser", True)
         wait_for = meta.get("wait_for")
         wait_time = meta.get("wait_time", 10000)
 
-        # If browser usage is disabled, return an empty Response
+        browser_mode = meta.get("browser_mode", "html")
+        keep_page = meta.get("keep_page", True)
+
         if not use_browser:
             return Response(url, "", 0, {}, None, False, None)
 
-        # Acquire an HTML‑only page
-        page = await self.browser_manager.get_page(url, auth_handler=auth_handler)
+        # Acquire page
+        page = await self.browser_manager.get_page(
+            url,
+            auth_handler=auth_handler,
+            browser_mode=browser_mode,
+        )
 
         try:
             self.logger.debug(f"Playwright GET: {url}")
-            response = await page.goto(url, wait_until="domcontentloaded")
 
-            # No response → still return a Response object
+            # ⭐ Espera real para JS dinámico
+            response = await page.goto(url, wait_until="networkidle")
+            await page.wait_for_timeout(500)
+
             if not response:
-                if auth_handler is None:
+                if not keep_page:
                     await page.close()
 
                 return Response(
@@ -82,12 +70,12 @@ class PlaywrightFetcher:
                     headers={},
                     request=None,
                     from_browser=True,
-                    browser_page=page if auth_handler else None,
+                    browser_page=page if keep_page else None,
                 )
 
-            # Extract HTML
+            # ⭐ Recaptura del DOM después del JS
             try:
-                html = await page.evaluate("document.documentElement.outerHTML")
+                html = await page.content()
                 body = html.encode("utf-8")
             except Exception:
                 try:
@@ -106,25 +94,28 @@ class PlaywrightFetcher:
                 except PlaywrightTimeoutError:
                     self.logger.debug(f"wait_for failed: {wait_for}")
 
-            # Close page only if no AuthHandler needs it
-            if auth_handler is None:
+            if not keep_page:
                 await page.close()
 
-            return Response(
-                url=response.url,
+            # ⭐ Construimos el Response y lo guardamos en la página
+            page.response_obj = Response(
+                url=response.url if response else url,
                 html=body.decode("utf-8", errors="ignore"),
-                status=response.status,
-                headers=response.headers,
+                status=response.status if response else 0,
+                headers=response.headers if response else {},
                 request=None,
                 from_browser=True,
-                browser_page=page if auth_handler else None,
+                browser_page=page if keep_page else None,
             )
+            
+            # ⭐ Devolvemos el Response real
+            return page.response_obj
 
         except Exception as exc:
             self.logger.error(f"Playwright error on {url}: {exc}")
 
             try:
-                if auth_handler is None:
+                if not keep_page:
                     await page.close()
             except Exception:
                 pass
@@ -136,5 +127,5 @@ class PlaywrightFetcher:
                 headers={},
                 request=None,
                 from_browser=True,
-                browser_page=page if auth_handler else None,
+                browser_page=page if keep_page else None,
             )

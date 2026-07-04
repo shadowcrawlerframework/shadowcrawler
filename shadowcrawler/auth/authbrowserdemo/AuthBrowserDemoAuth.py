@@ -1,141 +1,120 @@
 # shadowcrawler/auth/authbrowserdemo/AuthBrowserDemoAuth.py
-# ShadowCrawler v4.1.1 — Example Browser Auth Handler (Playwright)
+# ShadowCrawler v4.1.3 — Auth Browser Demo Handler (Tumblr-style)
 #
-# This file is provided **as an example only**.
-# It demonstrates how to implement a manual login flow using Playwright.
-# It is NOT intended for production use.
+# DISCLAIMER:
+# This authentication handler is provided **for demonstration and educational purposes only**.
+# It shows how ShadowCrawler performs browser-based authentication using Playwright
+# with a FULL browser context, persistent storage_state, and manual login flow.
 #
-# ShadowCrawler — Copyright © 2024–2030 Allan Mancera
-# Licensed under the Business Source License 1.1 (BUSL‑1.1).
+# This example is intentionally simple and NOT intended for production use.
+# Real-world authentication flows require robust, site-specific implementations.
+#
+# Demonstrates:
+# - FULL Playwright browser context
+# - Persistent cookies + localStorage
+# - Session restoration via storage_state
+# - Manual login flow handled entirely by the user
+# - Clean separation between spider, auth handler, and extractor
 
-"""
-Example authentication handler for demoqa.com.
-
-This module demonstrates:
-    - Detecting when login is required.
-    - Waiting for the user to manually log in.
-    - Persisting browser storage_state to disk.
-    - Integrating with BrowserManager and PlaywrightFetcher.
-
-Notes:
-    - This handler is intentionally simple and provided **as-is**.
-    - It is meant for educational and demonstration purposes.
-    - Real-world sites require robust, site-specific implementations.
-"""
-
-import asyncio
+import os
+import json
 from typing import Any
-from playwright.async_api import Page, BrowserContext
-
 from shadowcrawler.logging import get_logger
 
 
 class AuthBrowserDemoAuthHandler:
-    """Example Playwright-based authentication handler for demoqa.com.
+    """
+    Authentication handler for the AuthBrowserDemo spider.
+
+    This handler demonstrates how ShadowCrawler manages browser-based
+    authentication using Playwright. It restores full storage_state,
+    loads localStorage, and saves the session after manual login.
 
     Responsibilities:
-        - Detect login requirement on demoqa.com.
-        - Allow the user to manually log in.
-        - Persist storage_state to disk.
-        - Demonstrate the BaseAuthHandler contract.
-
-    This class is intentionally minimal and not production-ready.
+        - Load and restore full storage_state (cookies + localStorage).
+        - Save full session after manual login.
+        - Provide consistent FULL browser context behavior.
+        - Avoid relying on request_meta() or requires_login.
     """
 
-    domain: str = "demoqa.com"
-    storage_path: str = "auth_demoqa_session.json"
-
     def __init__(self) -> None:
-        """Initialize the demo authentication handler."""
         self.logger = get_logger("auth")
+        self.domain = "demoqa.com"
+
+        self.storage_path = os.path.expanduser(
+            "~/.shadowcrawler/sessions/authbrowserdemo.json"
+        )
 
     # ------------------------------------------------------------
-    # LOGIN REQUIRED?
+    # LOGIN CHECK
     # ------------------------------------------------------------
-    async def is_login_required(self, page: Page) -> bool:
-        """Determine whether the current page requires login.
-
-        Args:
-            page: Playwright Page instance.
-
-        Returns:
-            True if login is required, False otherwise.
+    async def is_login_required(self, page: Any) -> bool:
         """
-        url = page.url
-
-        # Special case: demoqa shows a "Go To Profile" button even on /login
-        if "/login" in url:
-            try:
-                goto_btn = page.get_by_role("button", name="Go To Profile")
-                if await goto_btn.is_visible():
-                    return False
-            except Exception:
-                pass
-
-            try:
-                msg = page.get_by_text("You are already logged in")
-                if await msg.is_visible():
-                    return False
-            except Exception:
-                pass
-
-            return True
-
-        # If on /profile, check if username is present
-        if "/profile" in url:
-            try:
-                username = await page.locator("#userName-value").inner_text()
-                if username.strip():
-                    return False
-            except Exception:
-                pass
-            return True
-
-        # Any other page → keep browser open until login is done
-        return True
-
-    # ------------------------------------------------------------
-    # PERFORM LOGIN (MANUAL)
-    # ------------------------------------------------------------
-    async def perform_login(self, page: Page) -> None:
-        """Wait for the user to manually complete the login flow.
-
-        Args:
-            page: Playwright Page instance.
-        """
-        print("🔐 Please complete the login manually in the browser window…")
-        print("When you are fully logged in, press ENTER here to continue.")
-
-        # ⭐ FIX: Mantener el navegador abierto hasta que el usuario confirme
-        input()
-
-        # Pequeña pausa para que Playwright estabilice el DOM
-        await page.wait_for_timeout(1500)
-
-        print("✅ Login confirmed, continuing…")
-
-    # ------------------------------------------------------------
-    # SAVE SESSION
-    # ------------------------------------------------------------
-    async def save_session(self, context: BrowserContext) -> None:
-        """Persist storage_state to disk.
-
-        Args:
-            context: Playwright BrowserContext instance.
+        Determines whether the user is already logged in.
+        For DemoQA, the profile page contains #userName-value when logged in.
         """
         try:
-            await context.storage_state(path=self.storage_path)
-            self.logger.info("Saved session storage_state to %s", self.storage_path)
-        except Exception as exc:  # noqa: BLE001
-            self.logger.error("Failed to save session: %s", exc)
+            el = await page.query_selector("#userName-value")
+            return el is None
+        except Exception:
+            return True
 
     # ------------------------------------------------------------
     # LOAD SESSION
     # ------------------------------------------------------------
-    async def load_session(self, context: BrowserContext) -> None:
-        """Load session state into the browser context.
+    async def load_session(self, context: Any) -> None:
+        if not os.path.exists(self.storage_path):
+            self.logger.debug("No previous session found for AuthBrowserDemo.")
+            return
 
-        Notes:
-            BrowserManager already loads storage_state when creating the context.
-        """
-        return
+        try:
+            with open(self.storage_path, "r", encoding="utf-8") as f:
+                state = json.load(f)
+
+            await context.set_storage_state(state)
+
+            if "localStorage" in state:
+                await context.add_init_script(
+                    f"""
+                    const data = {json.dumps(state["localStorage"])};
+                    for (const key in data) {{
+                        localStorage.setItem(key, data[key]);
+                    }}
+                    """
+                )
+
+            self.logger.info("AuthBrowserDemo session restored successfully.")
+
+        except Exception as exc:
+            self.logger.error(f"Error loading AuthBrowserDemo session: {exc}")
+
+    # ------------------------------------------------------------
+    # SAVE SESSION
+    # ------------------------------------------------------------
+    async def save_session(self, context: Any, page: Any) -> None:
+        try:
+            state = await context.storage_state()
+            local = await page.evaluate("() => ({...localStorage})")
+            state["localStorage"] = local
+
+            os.makedirs(os.path.dirname(self.storage_path), exist_ok=True)
+            with open(self.storage_path, "w", encoding="utf-8") as f:
+                json.dump(state, f, indent=2)
+
+            self.logger.info(
+                f"AuthBrowserDemo session saved to {self.storage_path}"
+            )
+
+        except Exception as exc:
+            self.logger.error(f"Error saving AuthBrowserDemo session: {exc}")
+
+    # ------------------------------------------------------------
+    # MANUAL LOGIN
+    # ------------------------------------------------------------
+    async def perform_login(self, page: Any) -> None:
+        print("🔐 Please log in manually in the browser window…")
+        print("Press ENTER here when you are done.")
+        input("")
+
+        print("✅ Login confirmed.")
+        await self.save_session(page.context, page)

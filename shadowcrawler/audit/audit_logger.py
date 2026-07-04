@@ -1,5 +1,5 @@
 # shadowcrawler/audit/audit_logger.py
-# ShadowCrawler v4.1.1 — Audit Logger
+# ShadowCrawler v4.1.3 — Audit Logger
 #
 # ShadowCrawler — Copyright © 2024–2030 Allan Mancera
 # This software is licensed under the Business Source License 1.1 (BUSL‑1.1).
