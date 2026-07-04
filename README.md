@@ -1,7 +1,10 @@
----
+# **ShadowCrawler**  
+A modern, domain‑aware, hybrid web crawling framework for Python.
 
-# ShadowCrawler  
-A modern, domain‑aware, hybrid web crawling framework for Python
+[![PyPI](https://img.shields.io/pypi/v/shadowcrawler)](https://pypi.org/project/shadowcrawler/)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-BUSL--1.1-blue)](LICENSE)
+[![GitHub Releases](https://img.shields.io/github/v/release/shadowcrawlerframework/shadowcrawler)](https://github.com/shadowcrawlerframework/shadowcrawler/releases)
 
 ShadowCrawler is a modular, extensible crawling framework designed for developers who want full control over how websites are fetched, parsed, and processed.  
 It combines speed, modularity, and browser‑level extraction into a single, clean architecture.
@@ -9,9 +12,8 @@ It combines speed, modularity, and browser‑level extraction into a single, cle
 ---
 
 ## ❤️ Origin Story  
-ShadowCrawler began as a small personal project — a quiet gift, a spark of affection — and unexpectedly grew into a full, production‑ready crawling framework.  
-It was built with care, curiosity, and intention.  
-Originally created for my guiding star, and built with the help of my AI copilot — a companion in code, clarity, and curiosity.
+ShadowCrawler began as a small personal project — a quiet spark that grew into a full, production‑ready crawling framework.  
+It was built with care, curiosity, and intention, shaped by countless iterations and the help of an AI copilot that assisted with clarity, structure, and design.
 
 ---
 
@@ -43,6 +45,8 @@ Originally created for my guiding star, and built with the help of my AI copilot
 pip install shadowcrawler
 ```
 
+PyPI: `https://pypi.org/project/shadowcrawler/`
+
 ---
 
 ## ⚡ Quickstart
@@ -50,13 +54,13 @@ pip install shadowcrawler
 Run with automatic spider detection:
 
 ```
-shadowcrawler run --url https://quotes.toscrape.com
+shadowcrawler run --url [https://quotes.toscrape.com](https://quotes.toscrape.com)
 ```
 
 Run with browser mode:
 
 ```
-shadowcrawler run --url https://demoqa.com/login --browser
+shadowcrawler run --url [https://demoqa.com/login](https://demoqa.com/login) --browser
 ```
 
 List spiders:
@@ -105,10 +109,10 @@ domain = "example.com"
 
 ## 🌐 Fetch Modes
 
-**HTTP Mode (default)**  
+### HTTP Mode (default)  
 Fast, lightweight, ideal for most sites.
 
-**Browser Mode (Playwright)**  
+### Browser Mode (Playwright)  
 Used automatically when:
 
 - login is required  
@@ -173,12 +177,27 @@ shadowcrawler/
 - HTTPNewsSpider  
 - GallerySpider  
 - AuthBrowserDemoSpider  
+- UniversalImageSpider
+
+---
+
+## 🔖 Versioning
+
+ShadowCrawler follows semantic versioning:
+
+- **MAJOR** — architecture changes  
+- **MINOR** — new features  
+- **PATCH** — fixes and stability updates  
+
+Latest release: **4.1.3**
 
 ---
 
 ## 🗺 Roadmap
 
 - [x] PyPI release  
+- [x] itch.io release  
+- [x] GitHub release  
 - [ ] Plugin system  
 - [ ] Distributed crawling  
 - [ ] Dashboard / Web UI  
@@ -190,24 +209,32 @@ shadowcrawler/
 
 ## 📦 itch.io Distribution
 
-ShadowCrawler is also distributed through itch.io, where you can get:
+ShadowCrawler is also distributed through itch.io:
 
-- The latest stable release  
-- Optional Pro features  
-- Example spiders  
-- Early access builds  
-- Support the project directly  
+`https://shadowcrawlerframework.itch.io/shadowcrawler`
+
+---
+
+## 🔗 GitHub Releases
+
+All versions, changelogs, and downloadable builds:
+
+`https://github.com/shadowcrawlerframework/shadowcrawler/releases`
+
+---
+
+## 🤝 Contributing
+
+See the full guide:  
+`CONTRIBUTING.md`
 
 ---
 
 ## ☕ Support the Project
 
-If ShadowCrawler has helped you or you want to support future development, you can leave a tip on Ko‑fi.  
-Every contribution helps keep the project alive and evolving.
+If ShadowCrawler has helped you or you want to support future development, you can leave a tip on Ko‑fi:
 
-```
-https://ko-fi.com/shadowcrawlerframework
-```
+`https://ko-fi.com/shadowcrawlerframework`
 
 ---
 
